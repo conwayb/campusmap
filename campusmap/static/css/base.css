@@ -1,0 +1,17 @@
+@import url("../vendor/bootstrap/dist/css/bootstrap.min.css");
+
+#main-nav {
+    background-color: #373737;
+    border-color: #373737;
+    border-radius: 0;
+}
+#main-nav .navbar-brand {
+    color: #dddddd;
+}
+#main-nav .navbar-nav > li > a {
+    color: #dddddd;
+}
+
+#main-nav .navbar-nav > li > a:hover {
+    color: #eeeeee;
+}

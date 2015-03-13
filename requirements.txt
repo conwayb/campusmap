@@ -1,0 +1,2 @@
+-e git+https://github.com/PSU-OIT-ARC/django-arcutils.git#egg=django-arcutils
+-e .[dev]

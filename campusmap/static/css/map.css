@@ -1,0 +1,62 @@
+@import url("base.css");
+@import url("../vendor/openlayers/css/ol.css");
+
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#main-nav {
+    margin: 0;
+}
+
+#map {
+    height: 100%;
+    padding-bottom: 50px;
+}
+
+#map .popover {
+    border-color: #8c9516;
+    min-width: 200px !important;
+    max-width: 300px !important;
+    padding: 0;
+}
+#map .popover .popover-title {
+    background-color: #8c9516;
+    color: #fff;
+}
+#map .popover .popover-content {
+    color: #373737;
+}
+
+#map-layer-switcher {
+    position: absolute;
+    top: 0.5em;
+    right: 0.5em;
+}
+
+#map-layer-switcher select {
+    background-color: rgba(0, 60, 136, 0.5);
+    color: #fff;
+    font-weight: bold;
+}
+#map-layer-switcher select:hover {
+    background-color: rgba(0, 60, 136, .7);
+}
+#map-layer-switcher select option {
+    background-color: #fff;
+    color: #373737;
+    font-weight: normal;
+}
+
+.ol-rotate {
+    left: 0.5em;
+    right: auto;
+    top: 7.143em;
+}
+
+.ol-touch .ol-rotate {
+    top: 8.3em;
+}
