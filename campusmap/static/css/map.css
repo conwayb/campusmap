@@ -36,7 +36,6 @@ body, html {
     top: 0.5em;
     right: 0.5em;
 }
-
 #map-layer-switcher select {
     background-color: rgba(0, 60, 136, 0.5);
     color: #fff;
@@ -56,7 +55,6 @@ body, html {
     right: auto;
     top: 7.143em;
 }
-
 .ol-touch .ol-rotate {
     top: 8.3em;
 }
