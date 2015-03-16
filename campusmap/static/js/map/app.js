@@ -140,7 +140,9 @@ define([
             var geom = feature.getGeometry(),
                 centroid = ol.extent.getCenter(geom.getExtent()),
                 props = feature.getProperties(),
-                title = [props.LONGNAME, ' ', '(', props.BUILDINGID, ')'].join(''),
+                buildingCode = props.BUILDINGID,
+                title = [props.LONGNAME, ' ', '(', buildingCode, ')'].join(''),
+                buildingHref = ['http://www.pdx.edu/floorplans/buildings/', buildingCode.toLowerCase()].join(''),
                 content = [];
             if (props.BLDG_ADDR) {
                 var addr = props.BLDG_ADDR.split(' ');
@@ -157,7 +159,9 @@ define([
                     addr[i] = word;
                 }
                 addr = addr.join(' ');
-                content.push('<p>', addr, '</p>');
+                content.push(
+                    '<p>', addr, '</p>',
+                    '<p><a href="', buildingHref, '">Building info & floorplans</a>');
             }
             content = content.join('');
             this.featurePopup.setPosition(centroid);
