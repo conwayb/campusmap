@@ -87,14 +87,12 @@ define([
                     format: new ol.format.WFS(),
                     loader: function (extent) {
                         var url = [
-                            'http://gis.rc.pdx.edu/arcgis/services/arc/campus_map/MapServer/WFSServer', [
+                            '//geoserver.stage.rc.pdx.edu/geoserver/campusmap_stage/wfs', [
                                 'service=WFS',
                                 'version=1.1.0',
                                 'request=GetFeature',
-                                'typename=arc_campus_map:Buildings',
-                                'srsname=EPSG:3857',
-                                //'bbox=' + extent.join(',') + ',EPSG:3857',
-                                'filter=<ogc:Filter><ogc:Not><ogc:PropertyIsEqualTo><ogc:PropertyName>BUILDINGID</ogc:PropertyName><ogc:Literal></ogc:Literal></ogc:PropertyIsEqualTo></ogc:Not></ogc:Filter>'
+                                'typename=campusmap_stage:psu_buildings',
+                                'srsname=EPSG:3857'
                             ].join('&')
                         ].join('?')
 
