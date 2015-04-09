@@ -18,7 +18,7 @@
         "bootstrap": "~3.3.2",
         "jquery": "~1.11.2",
         "openlayers": "https://github.com/openlayers/ol3/releases/download/v3.3.0/v3.3.0.zip",
-        "requirejs": "~2.1.16",
-        "r.js": "~2.1.16"
+        "requirejs": "~2.1.17",
+        "r.js": "~2.1.17"
     }
 }
