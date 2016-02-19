@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "homepage": "https://github.com/PSU-OIT-ARC/campusmap",
     "authors": [
-        "Wyatt Baldwin <wyatt.baldwin@pdx.edu>"
+        "Wyatt Baldwin <wbaldwin@pdx.edu>"
     ],
     "moduleType": [
         "amd"
