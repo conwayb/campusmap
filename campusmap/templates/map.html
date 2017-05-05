@@ -1,12 +1,17 @@
 {% extends 'base.html' %}
 
+{% load arc %}
+{% load staticfiles %}
+
 {% block head %}
     {{ block.super }}
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
 {% endblock %}
 
 {% block css %}
-    <link rel="stylesheet" href="{% static 'css/map.css' %}">
+    {{ block.super }}
+    <link rel="stylesheet" type="text/css" href="{% cdn_url 'openlayers-css' %}">
+    <link rel="stylesheet" href="{% static 'map/main.css' %}">
 {% endblock %}
 
 {% block body %}
@@ -15,6 +20,9 @@
 {% endblock %}
 
 {% block js %}
-    <script src="{% static 'vendor/requirejs/require.js' %}"
-            data-main="{% static 'js/map/main.js' %}"></script>
+    {{ block.super }}
+    <script>
+        var bingMapsKey = '{{ bing_maps_key }}';
+    </script>
+    {% require_block 'map' 'openlayers-js' %}
 {% endblock %}

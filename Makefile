@@ -1,132 +1,106 @@
-.PHONY: print-env \
-        init \
-        install \
-        install-update \
-        install-package \
-        virtualenv \
-        bower \
-        clean \
-        local-settings \
-        deploy \
-        manage \
-        migrations \
-        migrate \
-        run \
-        restart \
-        shell \
-        test \
-        coverage \
+package = campusmap
+venv ?= .env
+venv_python ?= python3.5
+bin = $(venv)/bin
+site_packages = $(venv)/lib/$(venv_python)/site-packages
 
-.DEFAULT_GOAL := run
+arctasks = $(site_packages)/arctasks
+arctasks_url = https://github.com/PSU-OIT-ARC/arctasks/archive/master.tar.gz#egg=psu.oit.arc.tasks
 
-PROJECT_NAME = campusmap
-VENV_DIR ?= .env
-BIN_DIR = $(VENV_DIR)/bin
-PYTHON = $(BIN_DIR)/python
-PIP = $(BIN_DIR)/pip
-MANAGE = $(PYTHON) manage.py
-SETTINGS_MODULE = $(DJANGO_SETTINGS_MODULE)
-ifeq ($(strip $(SETTINGS_MODULE)),)
-SETTINGS_MODULE = $(PROJECT_NAME).settings
-endif
-TEST_LOCAL_SETTINGS_FILE = local.base.cfg\#test
+# The init task creates a temporary virtualenv with arctasks installed
+# for bootstrapping purposes and then delegates to the arctasks init
+# task to do the actual initialization.
+init: $(venv) local.dev.cfg local.test.cfg $(arctasks)
+	$(bin)/runcommand init
 
-print-env:
-	@echo PROJECT_NAME: $(PROJECT_NAME)
-	@echo VENV_DIR: $(VENV_DIR)
-	@echo BIN_DIR: $(BIN_DIR)
-	@echo PYTHON: $(PYTHON)
-	@echo PIP: $(PIP)
-	@echo MANAGE: $(MANAGE)
-	@echo SETTINGS_MODULE: $(SETTINGS_MODULE)
+reinit: clean-egg-info clean-pyc clean-venv init
 
-init:
-	@$(MAKE) virtualenv args='-p python3'
-	@$(MAKE) test
-
-install:
-	$(PIP) install -r requirements.txt
-
-install-update:
-	$(PIP) install -U -r requirements.txt
-
-# pip install $(args)
-# Examples:
-#     make install-package args=bpython
-#     make install-package args='pep8 pyflakes'
-#     make install-package args='-U pep8'
-install-package:
-	$(PIP) install $(args)
-
-virtualenv:
-	@if [ -d "$(VENV_DIR)" ]; then \
-	    echo "Directory exists: $(VENV_DIR)"; \
+docker-init: local.docker.cfg
+	@if ! which docker >/dev/null; then \
+	    echo "docker is not installed or not on PATH" >&2; \
 	    exit 1; \
 	fi
-	virtualenv $(args) $(VENV_DIR)
-	@echo
-	$(MAKE) install
 
-bower:
-	cd $(PROJECT_NAME)/static && bower install
+	@if ! which docker-compose >/dev/null; then \
+	    echo "docker-compose is not installed or not on PATH" >&2; \
+	    exit 1; \
+	fi
 
-clean:
-	find . -iname '*.pyc' -delete
-	find . -iname '*.pyo' -delete
-	find . -iname '__pycache__' -print0 | xargs -0 rm -rf
+	@printf "If this is the first time you're running 'docker-init', it may take a while.\n"
 
-local-settings:
-	@echo "Loading settings module: $(SETTINGS_MODULE)"
-	$(BIN_DIR)/make-local-settings $(or $(strip $(env)),dev)
+	@read -n 1 -t 10 \
+	    -p "Continuing in 10 seconds. Hit N to abort or any other key to continue now... "; \
+	    if [ "$${REPLY}" != "n" ] && [ "$${REPLY}" != "N" ]; then \
+	        echo; \
+	        docker-compose build; \
+	    else \
+	        printf "\nAborted\n"; \
+	        exit 0; \
+	    fi
 
-env ?= stage
-deploy:
-	$(BIN_DIR)/invoke -e $(env) deploy --delete
+install-arctasks: $(arctasks)
+reinstall-arctasks: clean-arctasks $(arctasks)
 
-## Django (wrappers for ./manage.py commands)
+$(arctasks):
+	$(bin)/pip install -f https://pypi.research.pdx.edu/dist/ $(arctasks_url)
 
-# Run a manage.py command
-#
-# This is here so we don't have to create a target for every single manage.py
-# command. Of course, you could also just source your virtualenv's bin/activate
-# script and run manage.py directly, but this provides consistency if you're in
-# the habit of using make.
-#
-# Examples:
-#     make manage args=migrate
-#     make manage args='runserver 8080'
-manage:
-	@$(MANAGE) $(args)
+local.dev.cfg:
+	echo '[dev]' >> $@
+	echo 'extends = "local.base.cfg"' >> $@
 
-migrations:
-	$(MANAGE) makemigrations $(for)
+local.docker.cfg:
+	echo '[docker]' >> $@
+	echo 'extends = "local.base.cfg"' >> $@
 
-migrate:
-	$(MANAGE) migrate
+local.test.cfg:
+	echo '[test]' >> $@
+	echo 'extends = "local.base.cfg"' >> $@
 
-# Run the django web server
-host ?= 0.0.0.0
-port ?= 8000
-run:
-	$(MANAGE) runserver $(host):$(port)
+$(venv):
+	virtualenv -p $(venv_python) $(venv)
 
-restart:
-	touch $(PROJECT_NAME)/wsgi.py
-
-# Start a django shell
-# Run `make install-package name=bpython` (or ipython) first if you want
-# a fancy shell
-shell:
-	$(MANAGE) shell $(args)
-
-# Run the unit tests
-# Use `make test test=path.to.test` to run a specific test
 test:
-	LOCAL_SETTINGS_FILE=$(TEST_LOCAL_SETTINGS_FILE) $(MANAGE) test $(test)
+	$(bin)/runcommand test
+test-all:
+	QT_TEST_SUBMIT_TICKETS="1" $(bin)/runcommand test
 
-# Run unit tests then print a coverage report
-coverage:
-	LOCAL_SETTINGS_FILE=$(TEST_LOCAL_SETTINGS_FILE) $(BIN_DIR)/coverage run --source=$(PROJECT_NAME) manage.py test
-	$(BIN_DIR)/coverage report
+run:
+	$(bin)/runcommand runserver
 
-## /Django
+run-docker: docker-init docker-externals
+	@echo "NOTE: It may take a minute or so for all the Docker services to come up." 1>&2
+	docker-compose up
+
+run-services: docker-externals
+	docker-compose -f docker-compose.services.yaml up
+
+docker-externals:
+	docker network create --driver bridge $(package) || echo "$(package) network exists"
+	docker volume create --name $(package)-geoserver-data
+	docker volume create --name $(package)-postgres-data
+
+to ?= stage
+deploy:
+	$(bin)/runcommand --echo --env $(to) deploy
+
+clean: clean-pyc
+clean-all: clean-build clean-dist clean-egg-info clean-node_modules clean-pyc clean-static clean-venv
+clean-arctasks:
+	pip uninstall -y psu.oit.arc.tasks
+clean-build:
+	rm -rf build
+clean-dist:
+	rm -rf dist
+clean-egg-info:
+	rm -rf *.egg-info
+clean-node_modules:
+	rm -rf $(package)/static/node_modules
+clean-pyc:
+	find . -name __pycache__ -type d -print0 | xargs -0 rm -r
+	find . -name '*.py[co]' -type f -print0 | xargs -0 rm
+clean-venv:
+	rm -rf $(venv)
+
+.PHONY = init reinit docker-externals docker-init test test-all run run-docker run-services deploy \
+         clean clean-all clean-arctasks clean-build clean-dist clean-egg-info clean-node_modules \
+         clean-pyc clean-venv

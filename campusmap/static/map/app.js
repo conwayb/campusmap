@@ -1,4 +1,3 @@
-var MY_MAP;
 define([
     'jquery', 'ol', 'bootstrap'
 ], function ($, ol) {
@@ -48,66 +47,60 @@ define([
         baseLayers = [
             new ol.layer.Tile({
                 label: 'Map',
-                source: new ol.source.MapQuest({layer: 'osm'})
+                shortLabel: 'Map',
+                source: new ol.source.BingMaps({
+                    key: bingMapsKey,
+                    imagerySet: 'Road'
+                })
             }),
             new ol.layer.Tile({
-                label: 'Satellite',
+                label: 'Satellite/Aerial',
+                shortLabel: 'Satellite',
                 visible: false,
-                source: new ol.source.MapQuest({layer: 'sat'})
+                source: new ol.source.BingMaps({
+                    key: bingMapsKey,
+                    imagerySet: 'Aerial'
+                })
             }),
-            new ol.layer.Group({
+            new ol.layer.Tile({
                 label: 'Hybrid',
+                shortLabel: 'Hybrid',
                 visible: false,
-                layers: [
-                    new ol.layer.Tile({
-                        source: new ol.source.MapQuest({layer: 'sat'})
-                    }),
-                    new ol.layer.Tile({
-                        source: new ol.source.MapQuest({layer: 'hyb'})
-                    })
-                ]
+                source: new ol.source.BingMaps({
+                    key: bingMapsKey,
+                    imagerySet: 'AerialWithLabels'
+                })
             }),
             new ol.layer.Tile({
                 label: 'OpenStreetMap',
-                visible: false,
-                source: new ol.source.OSM()
+                shortLabel: 'OSM',
+                source: new ol.source.OSM(),
+                visible: false
             })
         ],
         layers = [
-            //new ol.layer.Tile({
-            //    source: new ol.source.TileWMS({
-            //        url: 'http://gis.rc.pdx.edu:6080/arcgis/services/arc/campus_map/MapServer/WMSServer',
-            //        params: {
-            //            layers: '4'
-            //        }
-            //    })
-            //}),
             new ol.layer.Vector({
-                source: new ol.source.ServerVector({
-                    format: new ol.format.WFS(),
-                    loader: function (extent) {
+                source: new ol.source.Vector({
+                    format: new ol.format.GeoJSON(),
+                    projection: projection,
+                    strategy: ol.loadingstrategy.bbox,
+                    url: function (extent) {
+                        var bbox;
+                        extent.push('EPSG:3857');
+                        bbox = extent.join(',')
                         var url = [
                             '//geoserver.stage.rc.pdx.edu/geoserver/campusmap_stage/wfs', [
                                 'service=WFS',
                                 'version=1.1.0',
                                 'request=GetFeature',
                                 'typename=campusmap_stage:psu_buildings',
-                                'srsname=EPSG:3857'
+                                'srsname=EPSG:3857',
+                                ['bbox', bbox].join('='),
+                                'outputFormat=application/json'
                             ].join('&')
-                        ].join('?')
-
-                        $.ajax({
-                            url: url,
-                            success: function (data) {
-                                var features = this.readFeatures(data);
-                                if (features) {
-                                    this.addFeatures(features);
-                                }
-                            }.bind(this)
-                        });
-                    },
-                    projection: projection,
-                    strategy: ol.loadingstrategy.createTile(new ol.tilegrid.XYZ({ maxZoom: 19 }))
+                        ].join('?');
+                        return url;
+                    }
                 }),
                 style: new ol.style.Style({
                     fill: new ol.style.Fill({
@@ -245,5 +238,5 @@ define([
         }
     });
 
-    map.getView().fitExtent(extent, map.getSize());
+    map.getView().fit(extent);
 });

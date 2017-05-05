@@ -1,0 +1,3 @@
+recursive-include campusmap/static *
+prune campusmap/static/node_modules
+recursive-include campusmap/templates *

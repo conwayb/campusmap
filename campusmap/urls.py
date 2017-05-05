@@ -1,9 +1,8 @@
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
 from .map.views import MapView
 
 
-urlpatterns = patterns(
-    '',
+urlpatterns = [
     url(r'^$', MapView.as_view(), name='map'),
-)
+]
