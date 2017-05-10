@@ -1,0 +1,64 @@
+version: "3"
+
+networks:
+    campusmap:
+        external: true
+
+volumes:
+    campusmap-geoserver-data:
+        external: true
+    campusmap-postgres-data:
+        external: true
+
+services:
+    postgres:
+        image: mdillon/postgis:9.4
+        environment:
+            - POSTGRES_USER=campusmap
+        networks:
+            - campusmap
+        ports:
+            - 5432:5432
+        volumes:
+            - campusmap-postgres-data:/var/lib/postgresql/data
+
+    geoserver:
+        image: psuoitwdt/geoserver
+        networks:
+            - campusmap
+        ports:
+            - 8080:80
+        volumes:
+            - campusmap-geoserver-data:/var/geoserver/data
+        links:
+            - postgres:database
+
+    campusmap-backend:
+        build:
+            context: backend
+        networks:
+            - campusmap
+        volumes:
+            - ./backend:/project/src
+        ports:
+            - 8000:8000
+        links:
+            - postgres:database
+        entrypoint: ["/project/venv/bin/gunicorn"]
+        command: [
+                "--bind", "0.0.0.0:8000",
+                "--reload",
+                "campusmap.wsgi",
+            ]
+
+    campusmap-frontend:
+        build:
+            context: frontend
+        networks:
+            - campusmap
+        volumes:
+            - ./frontend:/project/src
+        ports:
+            - 3000:3000
+        entrypoint: ["/project/src/node_modules/.bin/http-server"]
+        command: ["-p", "3000"]

@@ -1,20 +1,14 @@
 # Root
 /*.egg-info/
-/.env/
+/.env*/
 /build/
 /dist/
-/media/
-/static/
 /local.cfg
 /local.dev.cfg
 /local.docker.cfg
 /local.prod.cfg
 /local.stage.cfg
 /local.test.cfg
-/*/static/node_modules/
-/*/static/**/*.css
-/*/static/**/main-built.js
-*.DS_Store
 
 # Anywhere
 __pycache__/

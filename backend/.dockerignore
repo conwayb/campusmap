@@ -1,0 +1,14 @@
+*.egg-info
+.env*
+.git
+.idea
+build
+dist
+local.cfg
+local.dev.cfg
+local.prod.cfg
+local.stage.cfg
+
+**/.DS_Store
+**/*.py?
+**/__pycache__

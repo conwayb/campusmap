@@ -1,0 +1,3 @@
+require([
+    'campusmap/map/app'
+]);

@@ -1,0 +1,37 @@
+{
+    "name": "psu.oit.wdt.campusmap",
+    "description": "PSU Campus Map",
+    "version": "1.0.0",
+    "repository": "https://github.com/PSU-OIT-ARC/campusmap",
+    "license": "UNLICENSED",
+    "dependencies": {
+        "bootstrap": "~3.3.7",
+        "jquery": "~3.2.1",
+        "openlayers": "4.1.0"
+    },
+    "devDependencies": {
+        "almond": "^0.3.3",
+        "autoprefixer": "",
+        "http-server": "",
+        "node-sass": "",
+        "postcss-clean": "",
+        "postcss-cli": "",
+        "requirejs": "^2.3.2",
+        "text": "github:requirejs/text#2.0.15",
+        "uglify-js": "^2.7.5",
+        "watch": "1.0.1"
+    },
+    "scripts": {
+        "start": "./scripts/run",
+        "start-docker": "http-server -a localhost -p 3000 -P http://localhost:8000/",
+
+        "build": "npm run build:css && npm run build:js",
+        "build:css": "make css",
+        "build:js": "make js JS_C_OPT_OPTIMIZE=optimize=none",
+        "build:js:optimize": "make js",
+
+        "watch": "watch 'npm run build' campusmap",
+        "watch:css": "watch 'npm run build:css' campusmap",
+        "watch:js": "watch 'npm run build:js' campusmap"
+    }
+}

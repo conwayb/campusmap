@@ -1,0 +1,6 @@
+# Root
+/.env*/
+/build/
+/node_modules/
+/**/*.css
+/***/main-built.js
