@@ -29,7 +29,7 @@ VENV ?= .env
 VENV_PYTHON ?= python3.6
 
 init: $(VENV) node_modules css js
-reinit: clean-build init
+reinit: clean-build clean-venv init
 
 node_modules: package.json
 	npm install
@@ -78,5 +78,7 @@ clean-css:
 clean-js:
 	rm -f $(JS_TARGETS)
 	rm -rf $(JS_OUT)
+clean-venv:
+	rm -rf $(VENV)
 
-.PHONY := init css js run deploy clean-all clean-build clean-css clean-js
+.PHONY := init css js run deploy clean-all clean-build clean-css clean-js clean-venv
