@@ -1,5 +1,5 @@
-#!/usr/bin/env python3.5
 import subprocess
+#!/usr/bin/env python3.6
 from http.server import SimpleHTTPRequestHandler
 from socketserver import TCPServer
 
@@ -18,41 +18,38 @@ def deploy(config,
     build_dir = build_dir.format(**config)
     link_path = link_path.format(**config)
 
-    printer.info('\n'.join((
-        'Version: {config.version}',
-        'Env: {config.env}',
-        'Host: {host}',
-        'Build directory: {build_dir}',
-        'Link to build directory: {link_path}'
-    )).format_map(locals()))
+    printer.info(
+        f'Version: {config.version}',
+        f'Env: {config.env}',
+        f'Host: {host}',
+        f'Build directory: {build_dir}',
+        f'Link to build directory: {link_path}',
+        sep='\n')
 
     if not dry_run:
-        prompt = 'Continue with deployment of version {config.version} to {config.env} on {host}?'
-        prompt = prompt.format_map(locals())
+        prompt = f'Continue with deployment of version {config.version} to {config.env} on {host}?'
         confirm(config, prompt, yes_values=['yes'], abort_on_unconfirmed=True)
 
     build(config)
 
-    cmd = args_to_str((
+    cmd = (
         'rsync', '-rltz',
-        '--rsync-path "sudo -u {config.service.user} rsync"',
-        "--exclude '.*'",
-        "--exclude 'node_modules/'",
-        "--exclude 'scripts/'",
-        './', '{host}:{build_dir}'.format_map(locals()),
-    ), format_kwargs=locals())
+        f'--rsync-path "sudo -u {config.service.user} rsync"',
+        "--exclude '.*'", "--exclude 'node_modules/'",
+        './', f'{host}:{build_dir}',
+    )
     if dry_run:
         printer.debug('[DRY RUN]', cmd)
     else:
         local(config, cmd, echo=echo, hide=hide)
 
-    cmd = 'ln -sfn {build_dir} {link_path}'.format_map(locals())
+    cmd = f'ln -sfn {build_dir} {link_path}'
     if dry_run:
         printer.debug('[DRY RUN]', cmd)
     else:
         remote(config, cmd, host, run_as='{service.user}', echo=echo, hide=hide)
 
-    cmd = 'chmod -R u=rwX,g=rwX,o=rX {build_dir}'.format_map(locals())
+    cmd = f'chmod -R u=rwX,g=rwX,o=rX {build_dir}'
     if dry_run:
         printer.debug('[DRY RUN]', cmd)
     else:
@@ -82,7 +79,7 @@ def dev_server(config, host='0.0.0.0', port=3000):
 
     try:
         with TCPServer((host, port), SimpleHTTPRequestHandler) as http_server:
-            printer.info('Serving . at {host}:{port}'.format_map(locals()))
+            printer.info(f'Serving . at {host}:{port}')
             http_server.serve_forever()
     except Exception:
         printer.error('Could not run dev server; aborting...')

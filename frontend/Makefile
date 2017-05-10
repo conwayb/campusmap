@@ -26,7 +26,7 @@ JS_OUT := $(BUILD_DIR)/$(JS_SRC)/js
 JS_TARGETS := $(patsubst $(JS_SRC)/%, $(JS_OUT)/%, $(JS_SRC_FILES))
 
 VENV ?= .env
-VENV_PYTHON ?= python3.5
+VENV_PYTHON ?= python3.6
 
 init: $(VENV) node_modules css js
 reinit: clean-build init

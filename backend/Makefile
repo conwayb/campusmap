@@ -1,7 +1,7 @@
 package = campusmap
 
 venv ?= .env
-venv_python ?= python3.5
+venv_python ?= python3.6
 bin = $(venv)/bin
 site_packages = $(venv)/lib/$(venv_python)/site-packages
 
