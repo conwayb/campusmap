@@ -1,0 +1,113 @@
+@import "~@angular/material/theming";
+@import "variables";
+
+@include mat-core();
+
+$psu-primary-palette: (
+    50: #e8f5e9,
+    100: #c8e6c9,
+    200: #a5d6a7,
+    300: #81c784,
+    400: #66bb6a,
+    500: $psu-green,
+    600: #43a047,
+    700: #388e3c,
+    800: #2e7d32,
+    900: #1b5e20,
+    A100: #b9f6ca,
+    A200: #69f0ae,
+    A400: #00e676,
+    A700: #00c853,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: $white-87-opacity,
+        900: $white-87-opacity,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: $black-87-opacity,
+    )
+);
+
+$psu-accent-palette: (
+    50: #f1f8e9,
+    100: #dcedc8,
+    200: #c5e1a5,
+    300: #aed581,
+    400: #9ccc65,
+    500: $psu-accent-green,
+    600: #7cb342,
+    700: #689f38,
+    800: #558b2f,
+    900: #33691e,
+    A100: #ccff90,
+    A200: #b2ff59,
+    A400: #76ff03,
+    A700: #64dd17,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: $black-87-opacity,
+        600: $black-87-opacity,
+        700: $black-87-opacity,
+        800: white,
+        900: white,
+        A100: $black-87-opacity,
+        A200: $black-87-opacity,
+        A400: $black-87-opacity,
+        A700: $black-87-opacity,
+    )
+);
+
+
+$psu-warn-palette: (
+    50: #ffebee,
+    100: #ffcdd2,
+    200: #ef9a9a,
+    300: #e57373,
+    400: #ef5350,
+    500: $psu-red,
+    600: #e53935,
+    700: #d32f2f,
+    800: #c62828,
+    900: #b71c1c,
+    A100: #ff8a80,
+    A200: #ff5252,
+    A400: #ff1744,
+    A700: #d50000,
+    contrast: (
+        50: $black-87-opacity,
+        100: $black-87-opacity,
+        200: $black-87-opacity,
+        300: $black-87-opacity,
+        400: $black-87-opacity,
+        500: white,
+        600: white,
+        700: white,
+        800: $white-87-opacity,
+        900: $white-87-opacity,
+        A100: $black-87-opacity,
+        A200: white,
+        A400: white,
+        A700: white,
+    )
+);
+
+
+$psu-theme: mat-light-theme(
+    mat-palette($psu-primary-palette),
+    mat-palette($psu-accent-palette),
+    mat-palette($psu-warn-palette)
+);
+
+@include angular-material-theme($psu-theme);

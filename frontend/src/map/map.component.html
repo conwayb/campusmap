@@ -1,0 +1,61 @@
+<md-sidenav-container>
+    <md-sidenav #sidenav>
+        <md-card>
+            <md-card-title>{{ featureInfo.title }}</md-card-title>
+            <md-card-subtitle>{{ featureInfo.buildingCode }}</md-card-subtitle>
+            <md-card-content>
+                <div *ngIf="featureInfo.address">
+                    {{ featureInfo.address }}
+                </div>
+                <div>
+                    <a href="{{ featureInfo.buildingHref }}">
+                        Building info & floorplans
+                    </a>
+                </div>
+            </md-card-content>
+        </md-card>
+    </md-sidenav>
+
+    <div class="map">
+        <div class="map-controls">
+            <div class="map-control map-layer-switcher">
+                <button title="Select base map"
+                        md-icon-button
+                        [mdMenuTriggerFor]="menu">
+                    <md-icon>layers</md-icon>
+                </button>
+
+                <md-menu #menu="mdMenu">
+                    <button md-menu-item
+                            *ngFor="let layer of baseLayers"
+                            (click)="switchBaseLayer(layer)">
+                        {{ layer.get('label') }}
+                    </button>
+                </md-menu>
+            </div>
+
+            <div class="map-control map-full-extent">
+                <button md-icon-button
+                        (click)="zoomToFullExtent()">
+                    <md-icon>public</md-icon>
+                </button>
+            </div>
+
+            <div class="map-control">
+                <button title="Zoom in"
+                        md-icon-button
+                        (click)="zoomIn()">
+                    <md-icon>add</md-icon>
+                </button>
+            </div>
+
+            <div class="map-control">
+                <button title="Zoom out"
+                        md-icon-button
+                        (click)="zoomOut()">
+                    <md-icon>remove</md-icon>
+                </button>
+            </div>
+        </div>
+    </div>
+</md-sidenav-container>

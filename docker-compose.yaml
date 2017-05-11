@@ -59,6 +59,6 @@ services:
         volumes:
             - ./frontend:/project/src
         ports:
-            - 3000:3000
-        entrypoint: ["/project/src/node_modules/.bin/http-server"]
-        command: ["-p", "3000"]
+            - 4200:4200
+        entrypoint: ["npm"]
+        command: ["run", "serve-docker"]

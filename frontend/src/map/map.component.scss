@@ -1,0 +1,55 @@
+@import "../variables";
+
+@mixin floating-element() {
+    border-radius: 2px;
+    box-shadow: 2px 2px 4px;
+}
+
+md-sidenav-container {
+    position: absolute;
+    top: $toolbar-height;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+}
+
+:host /deep/ .mat-sidenav-backdrop.mat-sidenav-shown {
+    background-color: transparent;
+}
+
+md-sidenav {
+    width: $sidenav-width;
+    padding: $standard-padding;
+}
+
+.map {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+.map-controls {
+    position: absolute;
+    z-index: 10;
+    right: $standard-padding;
+    bottom: $standard-padding;
+
+    .map-control {
+        background-color: $psu-green;
+        margin-bottom: $half-standard-padding;
+        @include floating-element();
+    }
+    .map-control:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: $sm-width) {
+    md-sidenav-container {
+        top: $toolbar-height-sm;
+    }
+    md-sidenav {
+        width: $sidenav-width-sm;
+    }
+}

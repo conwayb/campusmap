@@ -1,11 +1,7 @@
-import subprocess
 #!/usr/bin/env python3.6
-from http.server import SimpleHTTPRequestHandler
-from socketserver import TCPServer
-
 from runcommands import command
 from runcommands.commands import local, remote, show_config
-from runcommands.util import abort, args_to_str, confirm, printer
+from runcommands.util import confirm, printer
 
 
 @command(default_env='stage')
@@ -30,13 +26,13 @@ def deploy(config,
         prompt = f'Continue with deployment of version {config.version} to {config.env} on {host}?'
         confirm(config, prompt, yes_values=['yes'], abort_on_unconfirmed=True)
 
-    build(config)
+    # TODO: Build for production
 
     cmd = (
         'rsync', '-rltz',
         f'--rsync-path "sudo -u {config.service.user} rsync"',
         "--exclude '.*'", "--exclude 'node_modules/'",
-        './', f'{host}:{build_dir}',
+        './build', f'{host}:{build_dir}',
     )
     if dry_run:
         printer.debug('[DRY RUN]', cmd)
@@ -54,39 +50,3 @@ def deploy(config,
         printer.debug('[DRY RUN]', cmd)
     else:
         remote(config, cmd, host, run_as='{service.user}', hide=hide)
-
-
-@command
-def build(config):
-    build_css(config)
-    build_js(config)
-
-
-@command
-def build_css(config):
-    local(config, 'make css')
-
-
-@command
-def build_js(config):
-    local(config, 'make js')
-
-
-@command
-def dev_server(config, host='0.0.0.0', port=3000):
-    css_watcher = subprocess.Popen(['watch', 'make css', 'campusmap'])
-    js_watcher = subprocess.Popen(['watch', 'make js', 'campusmap'])
-
-    try:
-        with TCPServer((host, port), SimpleHTTPRequestHandler) as http_server:
-            printer.info(f'Serving . at {host}:{port}')
-            http_server.serve_forever()
-    except Exception:
-        printer.error('Could not run dev server; aborting...')
-    except KeyboardInterrupt:
-        printer.info('\nShutting down dev server...')
-
-    css_watcher.terminate()
-    js_watcher.terminate()
-    css_watcher.wait()
-    js_watcher.wait()

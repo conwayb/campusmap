@@ -1,0 +1,26 @@
+// Global styles
+
+@import "~ol/ol";
+@import "variables";
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    font-family: Roboto, sans-serif;
+}
+
+a {
+    color: $psu-blue;
+}
+
+md-toolbar a {
+    color: white;
+    text-decoration: none;
+}
+
+.loading {
+    margin: 0;
+    padding: 16px;
+}

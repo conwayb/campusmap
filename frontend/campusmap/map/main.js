@@ -1,3 +1,0 @@
-require([
-    'campusmap/map/app'
-]);
