@@ -266,6 +266,26 @@ export class MapComponent implements OnInit {
         }
 
         this.featureInfo = data;
-        this.sidenav.open();
+
+        this.sidenav.open().then(() => {
+            // XXX: Use of private property
+            const sidenavWidth = this.sidenav._width;
+            const threshold = sidenavWidth + (sidenavWidth * 0.1);
+
+            const map = this.map;
+            const mapView = map.getView();
+            const center = extent.getCenter(feature.getGeometry().getExtent());
+            const centerPixel = map.getPixelFromCoordinate(center);
+            let x = centerPixel[0];
+            const y = centerPixel[1];
+
+            if (x < threshold) {
+                x = x - (sidenavWidth / 2);
+                mapView.animate({
+                  center: map.getCoordinateFromPixel([x, y]),
+                  duration: 400
+                });
+            }
+        });
     }
 }
