@@ -49,21 +49,12 @@ def deploy(config,
         prompt = f'Continue with deployment of version {config.version} to {config.env} on {host}?'
         confirm(config, prompt, yes_values=['yes'], abort_on_unconfirmed=True)
 
-    printer.hr(color='header')
-    printer.header('LOCAL')
-    printer.hr(color='header')
+    printer.header('LOCAL', '=' * 66)
 
     printer.header('Building...')
-    run_local_cmd(
-        'ng', 'build',
-        '--environment', config.env,
-        '--target', 'production',
-        '--output-path', local_build_dir,
-    )
+    build(config, local_build_dir, dry_run=dry_run, echo=echo, hide=hide)
 
-    printer.hr(color='header')
-    printer.header('REMOTE')
-    printer.hr(color='header')
+    printer.header('REMOTE', '=' * 65)
 
     printer.header('Provisioning...')
     run_remote_command(f'mkdir -p {remote_build_dir}')
@@ -81,3 +72,18 @@ def deploy(config,
 
     printer.header('Setting permissions...')
     run_remote_command(f'chmod -R u=rwX,g=rwX,o=rX {remote_build_dir}')
+
+
+@command(default_env='stage')
+def build(config, local_build_dir='{local.build.root}', dry_run=False, echo=False, hide=None):
+    local_build_dir = local_build_dir.format(**config)
+    cmd = (
+        'ng', 'build',
+        '--environment', config.env,
+        '--target', 'production',
+        '--output-path', local_build_dir,
+    )
+    if dry_run:
+        printer.debug('[DRY RUN]', ' '.join(cmd))
+    else:
+        local(config, cmd, echo=echo, hide=hide)
