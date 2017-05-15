@@ -140,7 +140,7 @@ export class MapComponent implements OnInit {
                                 'service=WFS',
                                 'version=1.1.0',
                                 'request=GetFeature',
-                                'typename=campusmap_stage:psu_buildings',
+                                'typename=campusmap:psu_buildings',
                                 `srsname=${epsg}`,
                                 `bbox=${extent.join(',')},${epsg}`,
                                 'outputFormat=application/json'
