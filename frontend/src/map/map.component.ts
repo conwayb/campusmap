@@ -38,10 +38,10 @@ const center = extent.getCenter(mapExtent);
 
 
 interface FeatureInfo {
-    title: String,
-    buildingCode: String,
+    name: String,
+    code: String,
     buildingHref: String,
-    address?: String
+    address: String
 }
 
 
@@ -140,7 +140,7 @@ export class MapComponent implements OnInit {
                                 'service=WFS',
                                 'version=1.1.0',
                                 'request=GetFeature',
-                                'typename=campusmap:psu_buildings',
+                                'typename=campusmap:buildings',
                                 `srsname=${epsg}`,
                                 `bbox=${extent.join(',')},${epsg}`,
                                 'outputFormat=application/json'
@@ -167,9 +167,10 @@ export class MapComponent implements OnInit {
             condition: condition.pointerMove,
             layers: [layer],
             style: (feature) => {
-                let props = feature.getProperties(),
-                    code = props.BUILDINGID,
-                    style = selectCache[code];
+                const props = feature.getProperties();
+                const name = props.name;
+                const code = props.code;
+                let style = selectCache[props.code];
                 if (typeof style === 'undefined') {
                     selectCache[code] = style = new Style({
                         fill: new Fill({
@@ -188,7 +189,7 @@ export class MapComponent implements OnInit {
                                 color: 'white',
                                 width: 4
                             }),
-                            text: `${props.LONGNAME} (${code})`,
+                            text: code ? `${props.name} (${code})` : name,
                             textAlign: 'center'
                         })
                     });
@@ -245,32 +246,13 @@ export class MapComponent implements OnInit {
 
     showFeatureInfo (feature) {
         const props = feature.getProperties();
-        const buildingCode = props.BUILDINGID;
-        let address;
 
-        let data: FeatureInfo = {
-            title: props.LONGNAME,
-            buildingCode: buildingCode,
-            buildingHref: `${floorplanBaseURL}${buildingCode.toLowerCase()}`
+        this.featureInfo = {
+            name: props.name,
+            code: props.code,
+            buildingHref: `${floorplanBaseURL}${props.code.toLowerCase()}`,
+            address: props.address
         };
-
-        if (props.BLDG_ADDR) {
-            address = props.BLDG_ADDR.split(' ');
-            address.forEach((word, i) => {
-                // XXX: It would be nice if the addresses were stored in
-                //      the standard format instead of all upper case.
-                //      This following works okay-ish.
-                if (i === 1) {
-                    word = word.toUpperCase();
-                } else {
-                    word = [word.charAt(0).toUpperCase(), word.substr(1).toLowerCase()].join('');
-                }
-                address[i] = word;
-            });
-            data.address = address.join(' ');
-        }
-
-        this.featureInfo = data;
 
         this.sidenav.open().then(() => {
             // XXX: Use of private property

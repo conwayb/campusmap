@@ -1,8 +1,8 @@
 <md-sidenav-container>
     <md-sidenav #sidenav>
         <md-card>
-            <md-card-title>{{ featureInfo.title }}</md-card-title>
-            <md-card-subtitle>{{ featureInfo.buildingCode }}</md-card-subtitle>
+            <md-card-title>{{ featureInfo.name }}</md-card-title>
+            <md-card-subtitle>{{ featureInfo.code }}</md-card-subtitle>
             <md-card-content>
                 <div *ngIf="featureInfo.address">
                     {{ featureInfo.address }}
