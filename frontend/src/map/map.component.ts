@@ -86,6 +86,8 @@ export class MapComponent implements OnInit {
         this.addInteractions(map, baseLayers, layers);
 
         map.getView().fit(mapExtent);
+
+        this.host.nativeElement.querySelector('.mat-sidenav-backdrop').remove();
     }
 
     makeBaseLayers () {
@@ -204,6 +206,9 @@ export class MapComponent implements OnInit {
             if (feature && typeof feature.getId() !== 'undefined') {
                 this.showFeatureInfo(feature);
             }
+            else {
+                this.hideFeatureInfo();
+            }
         })
     }
 
@@ -287,5 +292,10 @@ export class MapComponent implements OnInit {
                 });
             }
         });
+    }
+
+    hideFeatureInfo () {
+        // TBD
+        this.sidenav.close();
     }
 }
