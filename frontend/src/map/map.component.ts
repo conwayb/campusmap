@@ -136,7 +136,7 @@ export class MapComponent implements OnInit {
                     strategy: loadingstrategy.bbox,
                     url: (extent) => {
                         return [
-                            '//geoserver.stage.rc.pdx.edu/geoserver/campusmap_stage/wfs', [
+                            `${environment.map.server.baseURL}/campusmap/wfs`, [
                                 'service=WFS',
                                 'version=1.1.0',
                                 'request=GetFeature',
