@@ -3,8 +3,10 @@ from django.http import HttpResponse
 
 from arcutils import admin
 from arcutils.cas import urls as cas_urls
+from arcutils.drf.routers import DefaultRouter
 
 from . import views
+from .buildings.views import BuildingsViewSet
 
 
 urlpatterns = [
@@ -13,3 +15,8 @@ urlpatterns = [
     url(r'^admin/', include(admin.cas_site.urls)),
     url(r'^account/', include(cas_urls)),
 ]
+
+
+router = DefaultRouter()
+router.register(r'buildings', BuildingsViewSet)
+urlpatterns += router.urls
