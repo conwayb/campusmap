@@ -5,6 +5,6 @@ from . import views
 
 
 urlpatterns = [
-    url(r'^$', views.AppConfigView.as_view(), name='app-config'),
+    url(r'^app-config$', views.AppConfigView.as_view(), name='app-config'),
     url(r'^account/', include(cas_urls)),
 ]
