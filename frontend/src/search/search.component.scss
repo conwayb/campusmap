@@ -1,0 +1,36 @@
+@import "../mixins";
+@import "../variables";
+
+:host {
+    position: absolute;
+    top: $toolbar-height;
+    left: 0;
+    width: $sidenav-width;
+    z-index: 999;
+}
+
+form {
+    background-color: white;
+    margin: $standard-padding;
+    padding: 0;
+    width: $sidenav-width - (2 * $standard-padding);
+    @include floating-element();
+    input {
+        border: none;
+        outline: 0;
+        margin: 0;
+        padding: 0 $half-standard-padding;
+        height: $search-form-height;
+        line-height: 22px;
+        font-size: 16px;
+    }
+}
+
+@media (max-width: $sm-width) {
+    :host {
+        top: $toolbar-height-sm;
+    }
+    form {
+        width: $sidenav-width-sm - (2 * $standard-padding);
+    }
+}

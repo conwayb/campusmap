@@ -18,7 +18,8 @@ import {
 import { AppComponent } from './app.component';
 import { AppToolbarComponent } from './toolbar.component';
 import { MapComponent } from '../map/map.component';
-import { MapSearchComponent } from '../map/search.component';
+import { SearchComponent } from '../search/search.component';
+import { SearchService } from '../search/search.service';
 
 @NgModule({
     imports: [
@@ -41,7 +42,10 @@ import { MapSearchComponent } from '../map/search.component';
         AppComponent,
         AppToolbarComponent,
         MapComponent,
-        MapSearchComponent
+        SearchComponent
+    ],
+    providers: [
+        SearchService
     ],
     bootstrap: [
         AppComponent

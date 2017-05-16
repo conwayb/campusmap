@@ -1,0 +1,9 @@
+<form (ngSubmit)="search()">
+    <input name="term" type="search" [(ngModel)]="term" fxFlex>
+    <button type="reset" title="Search" *ngIf="term" md-icon-button>
+        <md-icon>clear</md-icon>
+    </button>
+    <button type="submit" title="Clear search terms" md-icon-button [disabled]="!term">
+        <md-icon>search</md-icon>
+    </button>
+</form>
