@@ -48,14 +48,6 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
     def field_name_map(self):
         raise NotImplementedError('Set `field_name_map` on subclass')
 
-    @abc.abstractmethod
-    def pre_run(self):
-        pass
-
-    @abc.abstractmethod
-    def post_run(self):
-        pass
-
     @cached_property
     def default_file_name(self):
         return f'{self.model_name_plural}.geojson'
@@ -67,6 +59,9 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
     @cached_property
     def model_name_plural(self):
         return self.model._meta.verbose_name_plural
+
+    def pre_run(self):
+        pass
 
     def run(self):
         self.pre_run()
@@ -87,6 +82,9 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
             importer.save(strict=True, silent=self.quiet, verbose=self.verbose)
 
         self.post_run()
+
+    def post_run(self):
+        pass
 
     def normalize_path(self, path):
         return os.path.normpath(os.path.abspath(os.path.expanduser(path)))
