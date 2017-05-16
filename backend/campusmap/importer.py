@@ -50,7 +50,8 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
 
     @cached_property
     def default_file_name(self):
-        return f'{self.model_name_plural}.geojson'
+        base_name = self.model_name_plural.replace(' ', '-')
+        return f'{base_name}.geojson'
 
     @cached_property
     def model_name(self):
