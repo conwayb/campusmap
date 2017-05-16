@@ -1,7 +1,13 @@
 <md-sidenav-container>
     <md-sidenav #sidenav>
         <md-card>
-            <md-card-title>{{ featureInfo.name }}</md-card-title>
+            <md-card-title fxLayout="row" fxLayoutAlign="start center">
+                {{ featureInfo.name }}
+                <span fxFlex></span>
+                <button md-icon-button (click)="hideFeatureInfo()">
+                    <md-icon>close</md-icon>
+                </button>
+            </md-card-title>
             <md-card-subtitle>{{ featureInfo.code }}</md-card-subtitle>
             <md-card-content>
                 <div *ngIf="featureInfo.address">
