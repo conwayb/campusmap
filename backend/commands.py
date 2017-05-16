@@ -1,5 +1,3 @@
-import os
-
 from runcommands import command
 
 from arctasks.commands import *
