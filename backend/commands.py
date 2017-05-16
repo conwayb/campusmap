@@ -1,4 +1,7 @@
+from importlib import import_module
+
 from runcommands import command
+from runcommands.util import abort, printer
 
 from arctasks.commands import *
 from arctasks.django import setup as django_setup
@@ -13,14 +16,46 @@ def init(config, overwrite=False, drop_db=False):
 
 
 @command(default_env='dev', timed=True)
-def import_geojson(config, source_dir='../gisdata', overwrite=False, verbose=False, quiet=False,
-                   dry_run=False):
+def import_geojson(config, source_dir='../gisdata', app=None, overwrite=False, verbose=False,
+                   quiet=False, dry_run=False):
     django_setup(config)
-    from campusmap.buildings.importer import BuildingsImporter
 
-    importer = BuildingsImporter(
-        source_dir, overwrite=overwrite, verbose=verbose, quiet=quiet, dry_run=dry_run)
-    importer.run()
+    from django.apps import apps
+    from django.utils.module_loading import module_has_submodule
+    from campusmap.importer import GeoJSONImporter
+
+    args = (source_dir,)
+    kwargs = dict(overwrite=overwrite, verbose=verbose, quiet=quiet, dry_run=dry_run)
+
+    importers = []
+
+    if app:
+        try:
+            app_config = apps.get_app_config(app)
+        except LookupError as exc:
+            abort(1, str(exc))
+        app_configs = [app_config]
+    else:
+        app_configs = apps.get_app_configs()
+
+    app_configs = [c for c in app_configs if module_has_submodule(c.module, 'importer')]
+
+    for app_config in app_configs:
+        importer_module = import_module(f'{app_config.name}.importer')
+        candidates = vars(importer_module).values()
+        candidates = [obj for obj in candidates if isinstance(obj, type)]
+        candidates = [obj for obj in candidates if issubclass(obj, GeoJSONImporter)]
+        candidates = [obj for obj in candidates if not obj is GeoJSONImporter]
+        importers.extend(candidates)
+
+    if not importers:
+        printer.warning('No GeoJSON importers found')
+
+    importers = sorted(importers, key=lambda importer: importer.__name__)
+
+    for importer_class in importers:
+        importer = importer_class(*args, **kwargs)
+        importer.run()
 
 
 # TEMPORARY -----------------------------------------------------------
