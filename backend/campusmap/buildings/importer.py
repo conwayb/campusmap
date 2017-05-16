@@ -31,7 +31,6 @@ class BuildingsImporter(GeoJSONImporter):
                     if self.verbose:
                         self.print(building.address, '=>', end=' ')
                     building.address = building.normalize_address(building.address)
-                    self.print(building.address)
                     building.save()
 
         pre_save.connect(normalize_address, sender=Building)
