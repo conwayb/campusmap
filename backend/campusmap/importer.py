@@ -68,12 +68,12 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
         self.pre_run()
 
         if self.overwrite:
-            self.warning(f'Removing {self.model_name_plural}...')
+            self.warning(f'Removing {self.model_name_plural}...', end=' ')
             if self.real_run:
                 self.model.objects.all().delete()
-            printer.print('Done')
+            printer.warning('Done')
 
-        self.print(f'Importing {self.model_name_plural}...')
+        self.print(f'Importing {self.model_name_plural}...', end=' ')
         if self.real_run:
             args = {
                 'source_srs': self.from_srid,
@@ -81,6 +81,7 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
             }
             importer = LayerMapping(self.model, self.path, self.field_name_map, **args)
             importer.save(strict=True, silent=self.quiet, verbose=self.verbose)
+        printer.print('Done')
 
         self.post_run()
 
