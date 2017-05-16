@@ -67,8 +67,8 @@ export class MapComponent implements OnInit {
 
     ngOnInit () {
         const baseLayers = this.makeBaseLayers();
-        const layers = this.makeLayers();
-        const allLayers = baseLayers.concat(layers);
+        const featureLayers = this.makeFeatureLayers();
+        const allLayers = baseLayers.concat(featureLayers);
 
         const map = new Map({
             target: this.host.nativeElement.querySelector('.map'),
@@ -83,7 +83,7 @@ export class MapComponent implements OnInit {
         this.map = map;
         this.baseLayers = baseLayers;
         this.addEventListeners(map);
-        this.addInteractions(map, baseLayers, layers);
+        this.addInteractions(map, baseLayers, featureLayers);
 
         map.getView().fit(mapExtent);
 
@@ -127,7 +127,7 @@ export class MapComponent implements OnInit {
         ];
     }
 
-    makeLayers () {
+    makeFeatureLayers () {
         return [
             this.makeFeatureLayer('buildings', new Style({
                 fill: new Fill({
@@ -222,8 +222,8 @@ export class MapComponent implements OnInit {
         })
     }
 
-    addInteractions (map: Map, baseLayers, layers) {
-        const highlighter = this.makeHighlighterInteraction(layers[0]);
+    addInteractions (map: Map, baseLayers, featureLayers) {
+        const highlighter = this.makeHighlighterInteraction(featureLayers[0]);
         map.addInteraction(highlighter);
     }
 
