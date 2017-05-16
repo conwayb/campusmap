@@ -23,6 +23,7 @@ import VectorLayer from 'ol/layer/vector';
 
 import Fill from 'ol/style/fill';
 import Stroke from 'ol/style/stroke';
+import Circle from 'ol/style/circle';
 import Style from 'ol/style/style';
 import Text from 'ol/style/text';
 
@@ -135,6 +136,25 @@ export class MapComponent implements OnInit {
                 stroke: new Stroke({
                     color: [255, 255, 255, 0.8],
                     width: 2
+                })
+            })),
+            this.makeFeatureLayer('bicycle-parking', new Style({
+                image: new Circle({
+                    fill: new Fill({
+                        color: 'white'
+                    }),
+                    stroke: new Stroke({
+                        color: '#333',
+                        width: 1
+                    }),
+                    radius: 10
+                }),
+                text: new Text({
+                    font: '14px Material Icons',
+                    fill: new Fill({
+                        color: 'black'
+                    }),
+                    text: "motorcycle"
                 })
             }))
         ];
