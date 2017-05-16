@@ -129,36 +129,45 @@ export class MapComponent implements OnInit {
 
     makeLayers () {
         return [
-            new VectorLayer({
-                source: new VectorSource({
-                    format: new GeoJSON(),
-                    projection: projection,
-                    strategy: loadingstrategy.bbox,
-                    url: (extent) => {
-                        return [
-                            `${environment.map.server.baseURL}/campusmap/wfs`, [
-                                'service=WFS',
-                                'version=1.1.0',
-                                'request=GetFeature',
-                                'typename=campusmap:buildings',
-                                `srsname=${epsg}`,
-                                `bbox=${extent.join(',')},${epsg}`,
-                                'outputFormat=application/json'
-                            ].join('&')
-                        ].join('?');
-                    }
+            this.makeFeatureLayer('buildings', new Style({
+                fill: new Fill({
+                    color: psuGreenRGB.concat([0.6])
                 }),
-                style: new Style({
-                    fill: new Fill({
-                        color: psuGreenRGB.concat([0.6])
-                    }),
-                    stroke: new Stroke({
-                        color: [255, 255, 255, 0.8],
-                        width: 2
-                    })
+                stroke: new Stroke({
+                    color: [255, 255, 255, 0.8],
+                    width: 2
                 })
-            })
+            }))
         ];
+    }
+
+    makeFeatureLayer (layerName, style?) {
+        return new VectorLayer({
+            source: this.makeWFSSource(layerName),
+            style: style
+        })
+    }
+
+    makeWFSSource (layerName) {
+        const wfsURL = [
+            `${environment.map.server.baseURL}/campusmap/wfs`, [
+                'service=WFS',
+                'version=1.1.0',
+                'request=GetFeature',
+                `srsname=${epsg}`,
+                'outputFormat=application/json'
+            ].join('&')
+        ].join('?');
+
+        return new VectorSource({
+            format: new GeoJSON(),
+            projection: projection,
+            strategy: loadingstrategy.bbox,
+            url: (extent) => {
+                const bbox = `${extent.join(',')},${epsg}`;
+                return `${wfsURL}&bbox=${bbox}&typename=campusmap:${layerName}`;
+            }
+        });
     }
 
     makeHighlighterInteraction (layer) {
