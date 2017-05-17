@@ -189,7 +189,7 @@ export class MapComponent implements OnInit {
         });
     }
 
-    makeHighlighterInteraction (layer) {
+    makeBuildingHighlighterInteraction (layer) {
         let selectCache = {};
         return new SelectInteraction({
             condition: condition.pointerMove,
@@ -202,7 +202,7 @@ export class MapComponent implements OnInit {
                 if (typeof style === 'undefined') {
                     selectCache[code] = style = new Style({
                         fill: new Fill({
-                            color: colorsHex.psuGreen
+                            color: colorsHex.psuBlue
                         }),
                         stroke: new Stroke({
                             color: 'white',
@@ -227,6 +227,28 @@ export class MapComponent implements OnInit {
         });
     }
 
+    makeBuildingSelectInteraction (layer) {
+        return new SelectInteraction({
+            condition: condition.pointerDown,
+            layers: [layer],
+            style: (feature) => {
+                const props = feature.getProperties();
+                const name = props.name;
+                const code = props.code;
+                let style = new Style({
+                    fill: new Fill({
+                        color: colorsHex.psuBlue
+                    }),
+                    stroke: new Stroke({
+                        color: 'white',
+                        width: 4
+                    }),
+                });
+                return [style];
+            }
+        });
+    }
+
     addEventListeners (map: Map) {
         map.on('click', (event) => {
             let feature = map.forEachFeatureAtPixel(event.pixel, (feature) => {
@@ -242,8 +264,13 @@ export class MapComponent implements OnInit {
     }
 
     addInteractions (map: Map, baseLayers, featureLayers) {
-        const highlighter = this.makeHighlighterInteraction(featureLayers[0]);
-        map.addInteraction(highlighter);
+        const buildingSelector = this.makeBuildingSelectInteraction(
+            featureLayers[0]);
+        map.addInteraction(buildingSelector);
+        const buildingHighlighter = this.makeBuildingHighlighterInteraction(
+            featureLayers[0]);
+        map.addInteraction(buildingHighlighter);
+
     }
 
     switchBaseLayer (layer) {
