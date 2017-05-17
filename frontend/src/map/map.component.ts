@@ -26,13 +26,12 @@ import Stroke from 'ol/style/stroke';
 import Style from 'ol/style/style';
 import Text from 'ol/style/text';
 
+import { colorsHex, colorsRGB } from '../constants';
 import { environment } from '../environments/environment';
 
 const floorplanBaseURL = 'http://www.pdx.edu/floorplans/buildings/';
 const epsg = 'EPSG:3857';
 const projection = proj.get(epsg);
-const psuGreen = '#8c9516';
-const psuGreenRGB = [140, 149, 22];
 const mapExtent = [-13657661.739414563, 5700905.92043886, -13655116.88116592, 5702920.846916851];
 const center = extent.getCenter(mapExtent);
 
@@ -131,7 +130,7 @@ export class MapComponent implements OnInit {
         return [
             this.makeFeatureLayer('buildings', new Style({
                 fill: new Fill({
-                    color: psuGreenRGB.concat([0.6])
+                    color: colorsRGB.psuGreen.concat([0.6])
                 }),
                 stroke: new Stroke({
                     color: [255, 255, 255, 0.8],
@@ -183,7 +182,7 @@ export class MapComponent implements OnInit {
                 if (typeof style === 'undefined') {
                     selectCache[code] = style = new Style({
                         fill: new Fill({
-                            color: psuGreen
+                            color: colorsHex.psuGreen
                         }),
                         stroke: new Stroke({
                             color: 'white',
@@ -192,7 +191,7 @@ export class MapComponent implements OnInit {
                         text: new Text({
                             font: '20px sans-serif',
                             fill: new Fill({
-                                color: psuGreen
+                                color: colorsHex.psuGreen
                             }),
                             stroke: new Stroke({
                                 color: 'white',
