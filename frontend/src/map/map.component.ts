@@ -154,7 +154,7 @@ export class MapComponent implements OnInit {
                     fill: new Fill({
                         color: 'black'
                     }),
-                    text: "motorcycle"
+                    text: "directions_bike"
                 })
             }))
         ];
