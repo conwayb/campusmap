@@ -139,6 +139,7 @@ export class MapComponent implements OnInit {
                     width: 2
                 })
             })),
+            this.makeTileLayer('bicycle-routes'),
             this.makeFeatureLayer('bicycle-parking', new Style({
                 image: new Circle({
                     fill: new Fill({
