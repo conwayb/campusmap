@@ -15,20 +15,20 @@ class BicycleParking(models.Model):
 
 class BicycleRoute(models.Model):
 
-    classification = models.CharField(max_length=255, choices=(
+    classification = models.CharField(max_length=255, null=True, blank=True, choices=(
         ('BKE-BLVD', 'Bike Boulevard'),
-        ('BKE-LANE', 'Bike Lane'),
         ('BKE-BUFF', 'Buffered Bike Lane'),
-        ('BKE-TRAK', 'Cycle Track'),
+        ('BKE-LANE', 'Bike Lane'),
         ('BKE-SHRD', 'Shared Roadway or Marked Bicycle Route'),
+        ('BKE-TRAK', 'Cycle Track'),
+        ('OTH-CONN', 'Shared Roadway Gap Connector'),
+        ('OTH-SWLK', 'Sidewalk'),
+        ('OTH-XING', 'Pedestrian or Bike Overpass/underpass'),
         ('PTH-LOMU', 'Local Multiuse Path'),
         ('PTH-REMU', 'Regional Multiuse Path'),
-        ('OTH-CONN', 'Shared Roadway Gap Connector'),
-        ('OTH-XING', 'Pedestrian or Bike Overpass/underpass'),
-        ('OTH-SWLK', 'Sidewalk'),
         ('SHL-WIDE', 'Wide Shoulder'),
     ))
-    bike_there_classification = models.CharField(max_length=255, choices=(
+    bike_there_classification = models.CharField(max_length=255, null=True, blank=True, choices=(
         ('CA', 'Caution Area'),
         ('HT', 'High Traffic'),
         ('MT', 'Medium Traffic'),
