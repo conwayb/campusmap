@@ -8,6 +8,7 @@ from .models import Building, normalize_address
 
 class BuildingsImporter(GeoJSONImporter):
 
+    abstract = False
     model = Building
 
     field_name_map = {

@@ -16,13 +16,13 @@ def init(config, overwrite=False, drop_db=False):
 
 
 @command(default_env='dev', timed=True)
-def import_geojson(config, source_dir='../gisdata', app=None, overwrite=False, verbose=False,
-                   quiet=False, dry_run=False):
+def import_gis_data(config, source_dir='../gisdata', app=None, model=None, overwrite=False,
+                    verbose=False, quiet=False, dry_run=False):
     django_setup(config)
 
     from django.apps import apps
     from django.utils.module_loading import module_has_submodule
-    from campusmap.importer import GeoJSONImporter
+    from campusmap.importer import Importer
 
     args = (source_dir,)
     kwargs = dict(overwrite=overwrite, verbose=verbose, quiet=quiet, dry_run=dry_run)
@@ -42,14 +42,21 @@ def import_geojson(config, source_dir='../gisdata', app=None, overwrite=False, v
 
     for app_config in app_configs:
         importer_module = import_module(f'{app_config.name}.importer')
-        candidates = vars(importer_module).values()
-        candidates = [obj for obj in candidates if isinstance(obj, type)]
-        candidates = [obj for obj in candidates if issubclass(obj, GeoJSONImporter)]
-        candidates = [obj for obj in candidates if not obj is GeoJSONImporter]
-        importers.extend(candidates)
+        objects = vars(importer_module).values()
+        importers.extend(
+            obj for obj in objects if (
+                isinstance(obj, type) and
+                issubclass(obj, Importer) and
+                (not obj.abstract)
+            )
+        )
+
+    if model:
+        model = apps.get_model(app, model)
+        importers = [importer for importer in importers if importer.model is model]
 
     if not importers:
-        printer.warning('No GeoJSON importers found')
+        printer.warning('No importers found')
 
     importers = sorted(importers, key=lambda importer: importer.__name__)
 

@@ -1,4 +1,5 @@
 import abc
+import glob
 import os
 
 from django.contrib.gis.utils import LayerMapping as BaseLayerMapping
@@ -8,6 +9,7 @@ from arcutils.decorators import cached_property
 
 
 class LayerMapping(BaseLayerMapping):
+class Importer(metaclass=abc.ABCMeta):
 
     def feature_kwargs(self, feature):
         kwargs = super().feature_kwargs(feature)
@@ -20,18 +22,24 @@ class LayerMapping(BaseLayerMapping):
                     value = None
                 kwargs[model_field_name] = value
         return kwargs
+    abstract = True
+    filters = ()
+    source_srid = 4326
 
-
-class GeoJSONImporter(metaclass=abc.ABCMeta):
-
-    def __init__(self, path, from_srid=4326, overwrite=False, verbose=False, quiet=False,
-                 dry_run=False):
+    def __init__(self, path, filters=None, source_srid=None, overwrite=False, verbose=False,
+                 quiet=False, dry_run=False):
         path = self.normalize_path(path)
         if os.path.isdir(path):
-            path = os.path.join(path, self.default_file_name)
+            path = self.get_path_from_dir(path)
 
         self.path = path
-        self.from_srid = from_srid
+
+        if filters is not None:
+            self.filters = filters
+
+        if source_srid is not None:
+            self.source_srid = source_srid
+
         self.overwrite = overwrite
         self.verbose = verbose
         self.quiet = quiet
@@ -48,10 +56,9 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
     def field_name_map(self):
         raise NotImplementedError('Set `field_name_map` on subclass')
 
-    @cached_property
-    def default_file_name(self):
-        base_name = self.model_name_plural.replace(' ', '-')
-        return f'{base_name}.geojson'
+    @abc.abstractmethod
+    def get_path_from_dir(self, path):
+        raise NotImplementedError('Implement `get_path_from_dir` in subclass')
 
     @cached_property
     def model_name(self):
@@ -76,8 +83,9 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
         self.print(f'Importing {self.model_name_plural}...', end=' ')
         if self.real_run:
             args = {
-                'source_srs': self.from_srid,
-                'transform': self.from_srid != 4326,
+                'source_srs': self.source_srid,
+                'transform': self.source_srid != 4326,
+                'filters': self.filters,
             }
             importer = LayerMapping(self.model, self.path, self.field_name_map, **args)
             importer.save(strict=True, silent=self.quiet, verbose=self.verbose)
@@ -100,3 +108,46 @@ class GeoJSONImporter(metaclass=abc.ABCMeta):
 
     def warning(self, *args, **kwargs):
         self.print('WARNING:', *args, color='warning', **kwargs)
+
+
+class GeoJSONImporter(Importer):
+
+    importer_type = 'geojson'
+
+    def get_path_from_dir(self, path):
+        base_name = self.model_name_plural.replace(' ', '-')
+        geojson_path = os.path.join(path, f'{base_name}.geojson')
+        if not os.path.isfile(geojson_path):
+            raise FileNotFoundError(
+                f'No GeoJSON file found at "{path}"; tried "{geojson_path}"')
+        return geojson_path
+
+
+class ShapefileImporter(Importer):
+
+    importer_type = 'shapefile'
+
+    def get_path_from_dir(self, path):
+        base_name = self.model_name_plural.replace(' ', '-')
+        shapefile_path = os.path.join(path, base_name, f'{base_name}.shp')
+
+        # Exact match
+        if os.path.isfile(shapefile_path):
+            return shapefile_path
+
+        # Fuzzy match of *.shp
+        glob_shapefile_path = os.path.join(path, base_name, '*.shp')
+        candidates = glob.glob(glob_shapefile_path)
+
+        if len(candidates) == 1:
+            shapefile_path = candidates[0]
+            return shapefile_path
+
+        raise FileNotFoundError(
+            f'No Shapefile found at "{path}"; tried "{shapefile_path}" and {glob_shapefile_path}')
+
+
+class RLISShapefileImporter(ShapefileImporter):
+
+    importer_type = 'rlis-shapefile'
+    source_srid = 2913

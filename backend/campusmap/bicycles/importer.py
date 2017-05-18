@@ -5,6 +5,7 @@ from .models import BicycleParking
 
 class BicycleParkingImporter(GeoJSONImporter):
 
+    abstract = False
     model = BicycleParking
 
     field_name_map = {
