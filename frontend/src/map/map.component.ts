@@ -16,6 +16,7 @@ import SelectInteraction from 'ol/interaction/select';
 
 import BingMapsSource from 'ol/source/bingmaps';
 import OSMSource from 'ol/source/osm';
+import TileWMSSource from 'ol/source/tilewms';
 import VectorSource from 'ol/source/vector';
 
 import TileLayer from 'ol/layer/tile';
@@ -185,6 +186,24 @@ export class MapComponent implements OnInit {
             url: (extent) => {
                 const bbox = `${extent.join(',')},${epsg}`;
                 return `${wfsURL}&bbox=${bbox}&typename=campusmap:${layerName}`;
+            }
+        });
+    }
+
+    makeTileLayer (layerName) {
+        return new TileLayer({
+            source: this.makeTileSource(layerName)
+        });
+    }
+
+    makeTileSource (layerName) {
+        const wmsURL = `${environment.map.server.baseURL}/campusmap/wms`;
+
+        return new TileWMSSource({
+            serverType: 'geoserver',
+            url: wmsURL,
+            params: {
+                LAYERS: `campusmap:${layerName}`
             }
         });
     }
