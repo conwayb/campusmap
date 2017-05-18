@@ -1,6 +1,6 @@
-from ..importer import GeoJSONImporter
+from ..importer import GeoJSONImporter, RLISShapefileImporter
 
-from .models import BicycleParking
+from .models import BicycleParking, BicycleRoute
 
 
 class BicycleParkingImporter(GeoJSONImporter):
@@ -12,3 +12,19 @@ class BicycleParkingImporter(GeoJSONImporter):
         'capacity': 'Capacity',
         'geom': 'POINT',
     }
+
+
+class BicycleRouteImporter(RLISShapefileImporter):
+
+    abstract = False
+    model = BicycleRoute
+
+    field_name_map = {
+        'classification': 'BIKETYP',
+        'bike_there_classification': 'BIKETHERE',
+        'geom': 'LINESTRING',
+    }
+
+    filters = (
+        (lambda data: data['classification'] or data['bike_there_classification']),
+    )

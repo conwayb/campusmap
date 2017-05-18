@@ -6,7 +6,7 @@ from arcutils.cas import urls as cas_urls
 from arcutils.drf.routers import DefaultRouter
 
 from . import views
-from .bicycles.views import BicycleParkingViewSet
+from .bicycles.views import BicycleParkingViewSet, BicycleRoutesViewSet
 from .buildings.views import BuildingsViewSet
 
 
@@ -20,5 +20,6 @@ urlpatterns = [
 
 router = DefaultRouter()
 router.register(r'bicycles/parking', BicycleParkingViewSet)
+router.register(r'bicycles/routes', BicycleRoutesViewSet)
 router.register(r'buildings', BuildingsViewSet)
 urlpatterns += router.urls
