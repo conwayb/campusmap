@@ -130,42 +130,53 @@ export class MapComponent implements OnInit {
 
     makeFeatureLayers () {
         return [
-            this.makeFeatureLayer('buildings', new Style({
-                fill: new Fill({
-                    color: colorsRGB.psuGreen.concat([0.6])
-                }),
-                stroke: new Stroke({
-                    color: [255, 255, 255, 0.8],
-                    width: 2
-                })
-            })),
-            this.makeTileLayer('bicycle-routes'),
-            this.makeFeatureLayer('bicycle-parking', new Style({
-                image: new Circle({
+            this.makeFeatureLayer('buildings', {
+                style: new Style({
                     fill: new Fill({
-                        color: 'white'
+                        color: colorsRGB.psuGreen.concat([0.6])
                     }),
                     stroke: new Stroke({
-                        color: '#333',
-                        width: 1
-                    }),
-                    radius: 10
-                }),
-                text: new Text({
-                    font: '14px Material Icons',
-                    fill: new Fill({
-                        color: 'black'
-                    }),
-                    text: "directions_bike"
+                        color: [255, 255, 255, 0.8],
+                        width: 2
+                    })
                 })
-            }))
+            }),
+            this.makeTileLayer('bicycle-routes', {maxResolution: 2}),
+            this.makeFeatureLayer('bicycle-parking', {
+                style: new Style({
+                    image: new Circle({
+                        fill: new Fill({
+                            color: 'white'
+                        }),
+                        stroke: new Stroke({
+                            color: '#333',
+                            width: 1
+                        }),
+                        radius: 10
+                    }),
+                    text: new Text({
+                        font: '14px Material Icons',
+                        fill: new Fill({
+                            color: 'black'
+                        }),
+                        text: "directions_bike"
+                    })
+                }),
+                maxResolution: 2 }
+            )
         ];
     }
 
-    makeFeatureLayer (layerName, style?) {
+    makeFeatureLayer (layerName, options: {
+        minResolution?: Number,
+        maxResolution?: Number,
+        style?: Style
+    }) {
         return new VectorLayer({
             source: this.makeWFSSource(layerName),
-            style: style
+            minResolution: options.minResolution,
+            maxResolution: options.maxResolution,
+            style: options.style
         })
     }
 
@@ -191,9 +202,14 @@ export class MapComponent implements OnInit {
         });
     }
 
-    makeTileLayer (layerName) {
+    makeTileLayer (layerName, options: {
+        minResolution?: Number,
+        maxResolution?: Number,
+    }) {
         return new TileLayer({
-            source: this.makeTileSource(layerName)
+            source: this.makeTileSource(layerName),
+            minResolution: options.minResolution,
+            maxResolution: options.maxResolution
         });
     }
 
