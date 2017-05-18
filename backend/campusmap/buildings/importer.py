@@ -6,7 +6,7 @@ from ..importer import GeoJSONImporter
 from .models import Building, normalize_address
 
 
-class BuildingsImporter(GeoJSONImporter):
+class BuildingImporter(GeoJSONImporter):
 
     abstract = False
     model = Building
