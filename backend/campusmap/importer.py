@@ -8,20 +8,8 @@ from arcutils.colorize import printer
 from arcutils.decorators import cached_property
 
 
-class LayerMapping(BaseLayerMapping):
 class Importer(metaclass=abc.ABCMeta):
 
-    def feature_kwargs(self, feature):
-        kwargs = super().feature_kwargs(feature)
-        for model_field_name in kwargs:
-            value = kwargs[model_field_name]
-            if isinstance(value, str):
-                value = value.strip()
-                field = self.model._meta.get_field(model_field_name)
-                if not value and field.null:
-                    value = None
-                kwargs[model_field_name] = value
-        return kwargs
     abstract = True
     filters = ()
     source_srid = 4326
@@ -151,3 +139,54 @@ class RLISShapefileImporter(ShapefileImporter):
 
     importer_type = 'rlis-shapefile'
     source_srid = 2913
+
+
+# Utilities -----------------------------------------------------------
+
+
+class LayerMapping(BaseLayerMapping):
+
+    # Allows features to be filtered.
+    # Trims leading and trailing whitespace from property values.
+    # Converts empty strings to NULL for nullable fields.
+
+    def __init__(self, *args, layer=0, filters=(), **kwargs):
+        super().__init__(*args, **kwargs)
+        self.layer_index = layer
+        self.filters = filters
+        self._layer = self.layer
+        del self.layer
+
+    @cached_property
+    def layer(self):
+        return LayerWrapper(self, self._layer, self.filters)
+
+    def feature_kwargs(self, feature):
+        kwargs = super().feature_kwargs(feature)
+        for model_field_name in kwargs:
+            value = kwargs[model_field_name]
+            if isinstance(value, str):
+                value = value.strip()
+                field = self.model._meta.get_field(model_field_name)
+                if not value and field.null:
+                    value = None
+                kwargs[model_field_name] = value
+        return kwargs
+
+
+class LayerWrapper:
+
+    def __init__(self, mapping, layer, filters):
+        self.__mapping = mapping
+        self.__layer = layer
+        self.__filters = filters
+
+    def __iter__(self):
+        return (feature for feature in self.__layer if self.__include(feature))
+
+    def __getattr__(self, name):
+        return getattr(self.__layer, name)
+
+    def __include(self, feature):
+        data = self.__mapping.feature_kwargs(feature)
+        return all(f(data) for f in self.__filters)
