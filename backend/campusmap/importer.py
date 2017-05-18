@@ -92,7 +92,7 @@ class Importer(metaclass=abc.ABCMeta):
             return
         if self.dry_run:
             args = ('[DRY RUN]',) + args
-        printer.print(*args, **kwargs)
+        printer.print(*args, flush=True, **kwargs)
 
     def warning(self, *args, **kwargs):
         self.print('WARNING:', *args, color='warning', **kwargs)
