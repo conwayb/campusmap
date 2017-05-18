@@ -44,6 +44,11 @@ interface FeatureInfo {
     address: String
 }
 
+interface FeatureLayerOptions {
+    minResolution?: Number,
+    maxResolution?: Number,
+    style?: Style
+}
 
 @Component({
     selector: 'psu-campusmap-map',
@@ -129,41 +134,50 @@ export class MapComponent implements OnInit {
 
     makeFeatureLayers () {
         return [
-            this.makeFeatureLayer('buildings', new Style({
-                fill: new Fill({
-                    color: colorsRGB.psuGreen.concat([0.6])
-                }),
-                stroke: new Stroke({
-                    color: [255, 255, 255, 0.8],
-                    width: 2
-                })
-            })),
-            this.makeFeatureLayer('bicycle-parking', new Style({
-                image: new Circle({
+            this.makeFeatureLayer(
+                'buildings', {
+                style: new Style({
                     fill: new Fill({
-                        color: 'white'
+                        color: colorsRGB.psuGreen.concat([0.6])
                     }),
                     stroke: new Stroke({
-                        color: '#333',
-                        width: 1
-                    }),
-                    radius: 10
-                }),
-                text: new Text({
-                    font: '14px Material Icons',
-                    fill: new Fill({
-                        color: 'black'
-                    }),
-                    text: "directions_bike"
+                        color: [255, 255, 255, 0.8],
+                        width: 2
+                    })
                 })
-            }))
+            }),
+            this.makeFeatureLayer(
+                'bicycle-parking', {
+                style: new Style({
+                    image: new Circle({
+                        fill: new Fill({
+                            color: 'white'
+                        }),
+                        stroke: new Stroke({
+                            color: '#333',
+                            width: 1
+                        }),
+                        radius: 10
+                    }),
+                    text: new Text({
+                        font: '14px Material Icons',
+                        fill: new Fill({
+                            color: 'black'
+                        }),
+                        text: "directions_bike"
+                    })
+                }),
+                maxResolution: 2,
+            })
         ];
     }
 
-    makeFeatureLayer (layerName, style?) {
+    makeFeatureLayer (layerName, options: FeatureLayerOptions) {
         return new VectorLayer({
             source: this.makeWFSSource(layerName),
-            style: style
+            style: options.style,
+            minResolution: options.minResolution,
+            maxResolution: options.maxResolution
         })
     }
 
