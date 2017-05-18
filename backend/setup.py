@@ -24,6 +24,7 @@ setup(
     extras_require={
         'dev': [
             'coverage',
+            'django-cors-headers>=2.0.2',
             'flake8',
             'gunicorn',
         ]
