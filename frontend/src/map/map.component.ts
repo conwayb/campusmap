@@ -352,7 +352,11 @@ export class MapComponent implements OnInit {
     }
 
     hideFeatureInfo () {
-        // TBD
+        const interactions = this.map.getInteractions();
+        const selected = interactions.getArray().filter(
+            (interaction) => interaction instanceof SelectInteraction
+        );
+        selected.map((select) => select.getFeatures().clear());
         this.sidenav.close();
     }
 }
