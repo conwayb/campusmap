@@ -97,7 +97,7 @@ export class MapComponent implements OnInit {
                 shortLabel: 'Map',
                 source: new BingMapsSource({
                     key: environment.map.bing.key,
-                    imagerySet: 'Road'
+                    imagerySet: 'CanvasLight'
                 })
             }),
             new TileLayer({
@@ -202,7 +202,7 @@ export class MapComponent implements OnInit {
                 if (typeof style === 'undefined') {
                     selectCache[code] = style = new Style({
                         fill: new Fill({
-                            color: colorsHex.psuBlue
+                            color: colorsHex.psuGray
                         }),
                         stroke: new Stroke({
                             color: 'white',
@@ -211,7 +211,7 @@ export class MapComponent implements OnInit {
                         text: new Text({
                             font: '20px sans-serif',
                             fill: new Fill({
-                                color: colorsHex.psuGreen
+                                color: colorsHex.psuGray
                             }),
                             stroke: new Stroke({
                                 color: 'white',
@@ -237,7 +237,7 @@ export class MapComponent implements OnInit {
                 const code = props.code;
                 let style = new Style({
                     fill: new Fill({
-                        color: colorsHex.psuBlue
+                        color: colorsHex.psuGray
                     }),
                     stroke: new Stroke({
                         color: 'white',
