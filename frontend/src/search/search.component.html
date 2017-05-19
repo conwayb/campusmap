@@ -1,19 +1,25 @@
 <form (ngSubmit)="search(searchTerm.value)">
     <input #searchTerm (keyup)="search(searchTerm.value)" fxFlex>
 
-    <button type="reset" title="Search" *ngIf="searchTerm.value" md-icon-button>
+    <button type="reset" title="Clear search terms"
+        *ngIf="searchTerm.value" md-icon-button>
         <md-icon>clear</md-icon>
     </button>
 
-    <button type="submit" title="Clear search terms" md-icon-button [disabled]="!searchTerm.value">
+    <button type="submit" title="Search"  md-icon-button [disabled]="!searchTerm.value">
         <md-icon>search</md-icon>
     </button>
 </form>
 
 <div class="search-results">
-    <a *ngFor="let result of results | async"
-       fxLayout="row" fxLayoutAlign="start center">
-        <span fxFlex>{{ result.name }}</span>
-        <md-icon>place</md-icon>
-    </a>
+    <div *ngFor="let result of results | async" class="search-result">
+        <a *ngIf="result.name; else notFound"
+            fxLayout="row" fxLayoutAlign="start center">
+            <span fxFlex>{{ result.name }}</span>
+            <md-icon>place</md-icon>
+        </a>
+        <ng-template #notFound>
+            <span>No results found</span>
+        </ng-template>
+    </div>
 </div>

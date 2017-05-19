@@ -24,6 +24,12 @@ export class SearchService {
             .get(this.url, {params: {q: term}})
             .map(response => {
                 return response.json().results as SearchResult[];
+            })
+            .catch(error => {
+                if (error.status === 404) {
+                    return Observable.of<any>([{error: error.statusText}]);
+                }
+                return Observable.throw("Search service error");
             });
     }
 }

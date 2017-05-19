@@ -36,7 +36,6 @@ export class SearchComponent implements OnInit {
                 return term ? this.searchService.search(term) : Observable.of<SearchResult[]>([]);
             })
             .catch(error => {
-                console.log('ERROR:', error);
                 return Observable.of<SearchResult[]>([]);
             });
     }

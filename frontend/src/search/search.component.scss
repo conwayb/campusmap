@@ -29,13 +29,11 @@ form {
 .search-results {
     background-color: white;
     margin: $standard-padding;
-    padding: $half-standard-padding;
     @include floating-element();
     > .search-result {
         display: block;
         margin: 0;
-        margin-bottom: $half-standard-padding;
-        padding: 0;
+        padding: $half-standard-padding;
     }
     > .search-result:last-child {
         margin: 0;
