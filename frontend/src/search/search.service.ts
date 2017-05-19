@@ -1,9 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
-import 'rxjs/add/operator/toPromise';
+import 'rxjs/add/operator/map';
+import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../environments/environment';
+
+export interface SearchResult {
+    id: Number,
+    name: String
+}
 
 @Injectable()
 export class SearchService {
@@ -13,16 +19,11 @@ export class SearchService {
 
     }
 
-    search (term): Promise<any> {
-        const params = {
-            q: term
-        };
-        const options = {
-            params: params
-        };
+    search (term): Observable<SearchResult[]> {
         return this.http
-            .get(this.url, options).toPromise()
-            .then(response => response.json().data)
-            .catch(error => Promise.reject(error));
+            .get(this.url, {params: {q: term}})
+            .map(response => {
+                return response.json().results as SearchResult[];
+            });
     }
 }

@@ -1,9 +1,19 @@
-<form (ngSubmit)="search()">
-    <input name="term" type="search" [(ngModel)]="term" fxFlex>
-    <button type="reset" title="Search" *ngIf="term" md-icon-button>
+<form (ngSubmit)="search(searchTerm.value)">
+    <input #searchTerm (keyup)="search(searchTerm.value)" fxFlex>
+
+    <button type="reset" title="Search" *ngIf="searchTerm.value" md-icon-button>
         <md-icon>clear</md-icon>
     </button>
-    <button type="submit" title="Clear search terms" md-icon-button [disabled]="!term">
+
+    <button type="submit" title="Clear search terms" md-icon-button [disabled]="!searchTerm.value">
         <md-icon>search</md-icon>
     </button>
 </form>
+
+<div class="search-results">
+    <a *ngFor="let result of results | async"
+       fxLayout="row" fxLayoutAlign="start center">
+        <span fxFlex>{{ result.name }}</span>
+        <md-icon>place</md-icon>
+    </a>
+</div>
