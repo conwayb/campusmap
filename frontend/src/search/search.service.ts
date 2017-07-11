@@ -29,7 +29,7 @@ export class SearchService {
                 if (error.status === 404) {
                     return Observable.of<any>([{error: error.statusText}]);
                 }
-                return Observable.throw("Search service error");
+                return Observable.throw('Search service error');
             });
     }
 }
