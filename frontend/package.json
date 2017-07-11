@@ -6,31 +6,29 @@
     "license": "UNLICENSED",
     "private": true,
     "dependencies": {
-        "@angular/animations": "^4.1.2",
-        "@angular/common": "^4.1.2",
-        "@angular/compiler": "~4.1.2",
-        "@angular/core": "^4.1.2",
-        "@angular/forms": "^4.1.2",
-        "@angular/http": "^4.1.2",
-        "@angular/platform-browser": "^4.1.2",
-        "@angular/platform-browser-dynamic": "^4.1.2",
-        "@angular/router": "^4.1.2",
-
-        "@angular/flex-layout": "^2.0.0-beta.3",
-        "@angular/material": "^2.0.0-beta.3",
-
+        "@angular/animations": "^4.2.6",
+        "@angular/cdk": "^2.0.0-beta.8",
+        "@angular/common": "^4.2.6",
+        "@angular/compiler": "^4.2.6",
+        "@angular/core": "^4.2.6",
+        "@angular/flex-layout": "^2.0.0-beta.8",
+        "@angular/forms": "^4.2.6",
+        "@angular/http": "^4.2.6",
+        "@angular/material": "^2.0.0-beta.8",
+        "@angular/platform-browser": "^4.2.6",
+        "@angular/platform-browser-dynamic": "^4.2.6",
+        "@angular/router": "^4.2.6",
         "core-js": "^2.4.1",
-        "rxjs": "^5.4.0",
-        "zone.js": "^0.8.10",
-
-        "ol": "^4.1.1",
-        "rbush": "^2.0.1"
+        "ol": "^4.2.0",
+        "rbush": "^2.0.1",
+        "rxjs": "^5.4.2",
+        "zone.js": "^0.8.12"
     },
     "devDependencies": {
-        "@angular/cli": "1.0.3",
-        "@angular/compiler-cli": "^4.1.2",
-        "tslint": "^5.2.0",
-        "typescript": "^2.3.2"
+        "@angular/cli": "^1.2.0",
+        "@angular/compiler-cli": "^4.2.6",
+        "tslint": "^5.5.0",
+        "typescript": "^2.4.1"
     },
     "scripts": {
         "build": "ng build",
