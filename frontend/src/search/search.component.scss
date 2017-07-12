@@ -1,20 +1,28 @@
 @import "../mixins";
 @import "../variables";
 
-:host {
+@mixin search-component {
     position: absolute;
     top: $toolbar-height;
     left: 0;
     width: $sidenav-width;
-    z-index: 999;
+    margin: 0;
+    padding: 0;
+    background-color: white;
+    @include floating-element();
+    @media (max-width: $sm-width) {
+        top: $toolbar-height-sm;
+        width: 100%;
+    }
 }
 
 form {
-    background-color: white;
-    margin: $standard-padding;
-    padding: 0;
-    width: $sidenav-width - (2 * $standard-padding);
-    @include floating-element();
+    @include search-component();
+    top: $toolbar-height + $standard-padding;
+    left: $standard-padding;
+    width: $sidenav-width - $twice-standard-padding;
+    z-index: 20;
+
     input {
         border: none;
         outline: 0;
@@ -26,25 +34,38 @@ form {
     }
 }
 
-.search-results {
-    background-color: white;
-    margin: $standard-padding;
-    @include floating-element();
-    > .search-result {
-        display: block;
-        margin: 0;
-        padding: $half-standard-padding;
+.result-container {
+    @include search-component();
+    bottom: 0;
+    overflow: auto;
+    z-index: 10;
+
+    padding-top: $search-form-height + $twice-standard-padding;
+
+    .results {
+        padding: 0;
+        .result {
+            border-top: 1px solid lightgray;
+        }
+        .result:last-child {
+            border-bottom: 1px solid gray;
+        }
     }
-    > .search-result:last-child {
-        margin: 0;
+
+    .error {
+        padding: $standard-padding;
     }
 }
 
 @media (max-width: $sm-width) {
-    :host {
-        top: $toolbar-height-sm;
-    }
     form {
-        width: $sidenav-width-sm - (2 * $standard-padding);
+        top: $toolbar-height-sm + $half-standard-padding;
+        left: $half-standard-padding;
+        right: $half-standard-padding;
+        width: auto;
+    }
+
+    .result-container {
+        padding-top: $search-form-height + $standard-padding;
     }
 }

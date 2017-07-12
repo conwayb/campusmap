@@ -1,14 +1,15 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 
+import 'rxjs/add/observable/throw';
 import 'rxjs/add/operator/map';
 import { Observable } from 'rxjs/Observable';
 
 import { environment } from '../environments/environment';
 
-export interface SearchResult {
-    id: Number,
-    name: String
+export class SearchResult {
+    id: number;
+    name: string;
 }
 
 @Injectable()
@@ -26,10 +27,18 @@ export class SearchService {
                 return response.json().results as SearchResult[];
             })
             .catch(error => {
+                let message;
+
                 if (error.status === 404) {
-                    return Observable.of<any>([{error: error.statusText}]);
+                    message = `No results found for "${term}"`;
+                } else {
+                    message = 'Unable to search at this time';
                 }
-                return Observable.throw('Search service error');
+
+                return Observable.throw({
+                    status: error.status,
+                    message: message
+                });
             });
     }
 }

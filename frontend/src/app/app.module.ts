@@ -10,6 +10,7 @@ import {
     MdCardModule,
     MdIconModule,
     MdInputModule,
+    MdListModule,
     MdMenuModule,
     MdSidenavModule,
     MdToolbarModule
@@ -34,6 +35,7 @@ import { SearchService } from '../search/search.service';
         MdCardModule,
         MdIconModule,
         MdInputModule,
+        MdListModule,
         MdMenuModule,
         MdSidenavModule,
         MdToolbarModule

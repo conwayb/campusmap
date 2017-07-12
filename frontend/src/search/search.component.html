@@ -1,8 +1,9 @@
-<form (ngSubmit)="search(searchTerm.value)">
+<form (ngSubmit)="search(searchTerm.value)" fxLayout="row">
     <input #searchTerm (keyup)="search(searchTerm.value)" fxFlex>
 
     <button type="reset" title="Clear search terms"
-        *ngIf="searchTerm.value" md-icon-button>
+            *ngIf="searchTerm.value" (click)="reset();"
+            md-icon-button>
         <md-icon>clear</md-icon>
     </button>
 
@@ -11,15 +12,25 @@
     </button>
 </form>
 
-<div class="search-results">
-    <div *ngFor="let result of results | async" class="search-result">
-        <a *ngIf="result.name; else notFound"
-            fxLayout="row" fxLayoutAlign="start center">
-            <span fxFlex>{{ result.name }}</span>
-            <md-icon>place</md-icon>
-        </a>
-        <ng-template #notFound>
-            <span>No results found</span>
-        </ng-template>
+<div *ngIf="results | async as items">
+    <div class="result-container" *ngIf="items.length">
+        <md-nav-list class="results">
+            <md-list-item class="result" *ngIf="items.length" fxLayoutAlign="end center">
+                {{ items.length }} results
+            </md-list-item>
+
+            <md-list-item class="result"
+                          *ngFor="let result of items"
+                          (click)="showResult(result)">
+                <a md-line>{{ result.name }}</a>
+                <md-icon>place</md-icon>
+            </md-list-item>
+        </md-nav-list>
+    </div>
+</div>
+
+<div class="result-container" *ngIf="error">
+    <div class="error">
+        {{ error.message }}
     </div>
 </div>

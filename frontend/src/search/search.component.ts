@@ -4,6 +4,7 @@ import 'rxjs/add/observable/of';
 import 'rxjs/add/operator/catch';
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/switchMap';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
@@ -24,6 +25,11 @@ export class SearchComponent implements OnInit {
 
     results: Observable<SearchResult[]>;
 
+    error: {
+        status: number,
+        message: string
+    };
+
     constructor (private searchService: SearchService) {
 
     }
@@ -33,14 +39,27 @@ export class SearchComponent implements OnInit {
             .debounceTime(300)
             .distinctUntilChanged()
             .switchMap(term => {
-                return term ? this.searchService.search(term) : Observable.of<SearchResult[]>([]);
-            })
-            .catch(error => {
+                if (term) {
+                    return this.searchService.search(term)
+                        .map(results => {
+                            this.error = null;
+                            return results;
+                        })
+                        .catch(error => {
+                            this.error = error;
+                            return Observable.of<SearchResult[]>([]);
+                        });
+                }
+                this.error = null;
                 return Observable.of<SearchResult[]>([]);
-            });
+            })
     }
 
     search (term: string): void {
         this.searchTerms.next(term);
+    }
+
+    reset () {
+        this.searchTerms.next(null);
     }
 }
