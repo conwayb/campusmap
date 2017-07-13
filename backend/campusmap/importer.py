@@ -12,10 +12,11 @@ class Importer(metaclass=abc.ABCMeta):
 
     abstract = True
     filters = ()
+    include_empty = False
     source_srid = 4326
 
-    def __init__(self, path, filters=None, source_srid=None, overwrite=False, verbose=False,
-                 quiet=False, dry_run=False):
+    def __init__(self, path, filters=None, include_empty=None, source_srid=None, overwrite=False,
+                 verbose=False, quiet=False, dry_run=False):
         path = self.normalize_path(path)
         if os.path.isdir(path):
             path = self.get_path_from_dir(path)
@@ -24,6 +25,9 @@ class Importer(metaclass=abc.ABCMeta):
 
         if filters is not None:
             self.filters = filters
+
+        if include_empty is not None:
+            self.include_empty = include_empty
 
         if source_srid is not None:
             self.source_srid = source_srid
@@ -74,6 +78,7 @@ class Importer(metaclass=abc.ABCMeta):
                 'source_srs': self.source_srid,
                 'transform': self.source_srid != 4326,
                 'filters': self.filters,
+                'include_empty': self.include_empty,
             }
             importer = LayerMapping(self.model, self.path, self.field_name_map, **args)
             importer.save(strict=True, silent=self.quiet, verbose=self.verbose)
@@ -150,16 +155,17 @@ class LayerMapping(BaseLayerMapping):
     # Trims leading and trailing whitespace from property values.
     # Converts empty strings to NULL for nullable fields.
 
-    def __init__(self, *args, layer=0, filters=(), **kwargs):
+    def __init__(self, *args, layer=0, filters=(), include_empty=False, **kwargs):
         super().__init__(*args, **kwargs)
         self.layer_index = layer
         self.filters = filters
+        self.include_empty = include_empty
         self._layer = self.layer
         del self.layer
 
     @cached_property
     def layer(self):
-        return LayerWrapper(self, self._layer, self.filters)
+        return LayerWrapper(self, self._layer, self.filters, self.include_empty)
 
     def feature_kwargs(self, feature):
         kwargs = super().feature_kwargs(feature)
@@ -176,10 +182,12 @@ class LayerMapping(BaseLayerMapping):
 
 class LayerWrapper:
 
-    def __init__(self, mapping, layer, filters):
+    def __init__(self, mapping, layer, filters, include_empty):
         self.__mapping = mapping
         self.__layer = layer
         self.__filters = filters
+        if not include_empty:
+            self.__filters += ((lambda data: data['__feature__'].geom.coords),)
 
     def __iter__(self):
         return (feature for feature in self.__layer if self.__include(feature))
@@ -189,4 +197,6 @@ class LayerWrapper:
 
     def __include(self, feature):
         data = self.__mapping.feature_kwargs(feature)
-        return all(f(data) for f in self.__filters)
+        data['__feature__'] = feature
+        include = all(f(data) for f in self.__filters)
+        return include
