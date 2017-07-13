@@ -14,8 +14,8 @@ class GeoJSONField(Field):
             ('id', feature_id),
             ('type', 'Feature'),
             ('geometry', geometry),
-            ('bbox', geom.extent),
-            ('centroid', geom.centroid.coords),
+            ('bbox', geom.extent if geom.coords else None),
+            ('centroid', geom.centroid.coords if geom.coords else None),
             ('properties', properties),
         ))
 
