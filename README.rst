@@ -110,3 +110,32 @@ not, some of this will need to be adjusted slightly.
     upload the ``style.sld`` file from the repo.
   - Assign this style by setting Default style in the ``bicycle-routes``
     layer's Publishing options (under ``WMS Settings``).
+
+Deployment
+==========
+
+Setup
+-----
+
+Currently, only deployment to staging is supported. To prepare for deployment,
+copy the virtualhost config in ``etc/httpd/vhost.d/stage-vhost.conf`` to the
+staging server then run the following command from the ``backend`` directory::
+
+    run -e stage make-mod-wsgi-config
+
+This creates a ``mod_wsgi-express`` configuration that runs an Apache instance
+just for this site. It can be controlled with the ``mod-wsgi`` command (from
+the ``backend`` directory)::
+
+    run -e stage mod-wsgi <start|stop|restart>
+
+Deploying
+---------
+
+To deploy back end code::
+
+    cd backend && make deploy
+
+To deploy front end code::
+
+    cd frontend && make deploy

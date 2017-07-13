@@ -1,3 +1,4 @@
+import os
 from importlib import import_module
 
 from runcommands import command
@@ -74,33 +75,31 @@ def import_gis_data(config, source_dir='../gisdata', app=None, model=None, overw
 
 
 @command(default_env='stage')
-def start_mod_wsgi(config, server_name='{package}.staging.rc.pdx.edu', port=9007):
+def make_mod_wsgi_config(config, restart=True):
+    mod_wsgi(config, 'stop')
+    remote(config, 'mkdir -p {mod_wsgi.site}')
     remote(config, (
-        '/usr/bin/mod_wsgi-express', 'start-server',
-        '--server-name', server_name,
-        '--server-alias', '{package}*',
-        '--port', str(port),
-        '--processes', '2',
-        '--threads', '4',
-        '--entry-point', '{remote.build.wsgi_file}',
-    ), run_as='{service.user}', strategy='ssh-background')
+        '/usr/bin/mod_wsgi-express', 'setup-server',
+        '--server-root', '{mod_wsgi.site}',
+        '--server-name', '{mod_wsgi.server_name}',
+        '--server-alias', '{mod_wsgi.server_alias}',
+        '--user', '{service.user}',
+        '--group', '{service.group}',
+        '--port', '{mod_wsgi.port}',
+        '--processes', '{mod_wsgi.processes}',
+        '--threads', '{mod_wsgi.threads}',
+        '--entry-point', '{remote.path.wsgi_file}',
+        '--document-root', '{remote.path.front_end.static}',
+        '--directory-index', 'index.html',
+        '--url-alias', '/api/static {remote.path.static}',
+    ), sudo=True)
+    if restart:
+        mod_wsgi(config, 'start')
 
 
-from runcommands.runners.local import LocalRunner
-from runcommands.runners.remote import RemoteRunner
-
-
-class RemoteRunnerSSH(RemoteRunner):
-
-    name = 'ssh-background'
-
-    def run(self, cmd, host, user=None, cd=None, path=None, prepend_path=None,
-            append_path=None, sudo=False, run_as=None, echo=False, hide=False, timeout=30,
-            debug=False):
-        ssh_connection_str = '{user}@{host}'.format(user=user, host=host) if user else host
-        path = self.munge_path(path, prepend_path, append_path, '$PATH')
-        cmd = f'nohup {cmd} &>/dev/null'
-        remote_command = self.get_remote_command(cmd, user, cd, path, sudo, run_as)
-        ssh_cmd = ['ssh', '-f', ssh_connection_str, remote_command]
-        local_runner = LocalRunner()
-        return local_runner.run(ssh_cmd, echo=echo, hide=hide, timeout=timeout, debug=debug)
+@command(default_env='stage')
+def mod_wsgi(config, action):
+    if action == 'log':
+        remote(config, 'tail -f {mod_wsgi.site}/error_log', sudo=True)
+    else:
+        remote(config, ('{mod_wsgi.apachectl}', action), sudo=True)
