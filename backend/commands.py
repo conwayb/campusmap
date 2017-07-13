@@ -29,6 +29,11 @@ def import_gis_data(config, source_dir='../gisdata', app=None, model=None, overw
 
     importers = []
 
+    if model and '.' in model:
+        if app:
+            raise ValueError('You passed `app` via `--app` and via `--model`')
+        app, model = model.split('.')
+
     if app:
         try:
             app_config = apps.get_app_config(app)
