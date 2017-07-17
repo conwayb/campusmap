@@ -1,27 +1,3 @@
-<md-sidenav-container>
-    <md-sidenav #sidenav>
-        <md-card>
-            <md-card-title fxLayout="row" fxLayoutAlign="start center">
-                {{ featureInfo.name }}
-                <span fxFlex></span>
-                <button md-icon-button (click)="hideFeatureInfo()">
-                    <md-icon>close</md-icon>
-                </button>
-            </md-card-title>
-            <md-card-subtitle>{{ featureInfo.code }}</md-card-subtitle>
-            <md-card-content>
-                <div *ngIf="featureInfo.address">
-                    {{ featureInfo.address }}
-                </div>
-                <div>
-                    <a href="{{ featureInfo.buildingHref }}">
-                        Building info & floorplans
-                    </a>
-                </div>
-            </md-card-content>
-        </md-card>
-    </md-sidenav>
-
     <div class="map">
         <div class="map-controls">
             <div class="map-control map-layer-switcher">
@@ -64,4 +40,3 @@
             </div>
         </div>
     </div>
-</md-sidenav-container>

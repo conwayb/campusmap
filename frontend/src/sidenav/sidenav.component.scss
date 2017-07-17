@@ -1,0 +1,7 @@
+@import "../variables";
+
+md-sidenav {
+    width: $sidenav-width;
+    padding: $standard-padding;
+    padding-top: $standard-padding * 2 + $search-form-height;
+}

@@ -3,28 +3,10 @@
 
 :host {
     position: absolute;
-    top: $toolbar-height;
-    right: 0;
-    bottom: 0;
-    left: 0;
-}
-
-:host /deep/ .mat-sidenav-backdrop.mat-sidenav-shown {
-    background-color: transparent;
-}
-
-md-sidenav-container, .map {
-    position: absolute;
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-}
-
-md-sidenav {
-    width: $sidenav-width;
-    padding: $standard-padding;
-    padding-top: $standard-padding * 2 + $search-form-height;
 }
 
 .map-controls {

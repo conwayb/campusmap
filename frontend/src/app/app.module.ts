@@ -19,8 +19,11 @@ import {
 import { AppComponent } from './app.component';
 import { AppToolbarComponent } from './toolbar.component';
 import { MapComponent } from '../map/map.component';
+import MapService from '../map/map.service';
 import { SearchComponent } from '../search/search.component';
 import { SearchService } from '../search/search.service';
+import { SidenavComponent } from '../sidenav/sidenav.component';
+import SidenavService from '../sidenav/sidenav.service';
 
 @NgModule({
     imports: [
@@ -44,10 +47,13 @@ import { SearchService } from '../search/search.service';
         AppComponent,
         AppToolbarComponent,
         MapComponent,
-        SearchComponent
+        SearchComponent,
+        SidenavComponent
     ],
     providers: [
-        SearchService
+        SearchService,
+        SidenavService,
+        MapService
     ],
     bootstrap: [
         AppComponent
