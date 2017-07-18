@@ -24,7 +24,7 @@
                 "psu-theme.scss",
                 "styles.scss"
             ],
-
+            "test": "test.ts",
             "environmentSource": "environments/environment.ts",
             "environments": {
                 "dev": "environments/environment.ts",
@@ -33,6 +33,11 @@
             }
         }
     ],
+    "test": {
+        "karma": {
+            "config": "./karma.conf.js"
+        }
+    },
     "defaults": {
         "styleExt": "css",
         "component": {}

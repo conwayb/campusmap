@@ -27,14 +27,24 @@
     "devDependencies": {
         "@angular/cli": "^1.2.0",
         "@angular/compiler-cli": "^4.2.6",
+        "@types/jasmine": "2.5.38",
+        "jasmine-core": "2.5.2",
+        "jasmine-spec-reporter": "2.5.0",
+        "karma": "1.2.0",
+        "karma-chrome-launcher": "^2.0.0",
+        "karma-cli": "^1.0.1",
+        "karma-jasmine": "^1.0.2",
+        "karma-remap-istanbul": "^0.2.1",
         "tslint": "^5.5.0",
-        "typescript": "^2.4.1"
+        "typescript": "^2.4.1",
+        "ts-node": "1.2.1"
     },
     "scripts": {
         "build": "ng build",
         "ng": "ng",
         "serve": "ng serve",
         "serve-docker": "ng serve --host 0.0.0.0",
-        "start": "ng serve"
+        "start": "ng serve",
+        "test": "ng test"
     }
 }
